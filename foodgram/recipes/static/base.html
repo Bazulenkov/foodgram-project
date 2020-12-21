@@ -12,7 +12,9 @@
 <body class="body">
     {% include header.html %}
     <main class="main container">
-
+        {% block content %}
+                <!-- Содержимое страницы -->
+        {% endblock content %}
     </main>
     {% include footer.html %}
     <script src="{% static "js/components/MainCards.js" %}"></script>
