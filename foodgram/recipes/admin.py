@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from models import Resipe
+from .models import Recipe
 
 
-class ResipeAdmin(admin.ModelAdmin):
+class RecipeAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
 
 
-admin.site.register(Resipe, ResipeAdmin)
+admin.site.register(Recipe, RecipeAdmin)

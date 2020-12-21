@@ -6,12 +6,12 @@ User = get_user_model()
 
 
 class Ingredient(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=20)
     amount = models.PositiveSmallIntegerField()
-    unit = models.CharField()
+    unit = models.CharField(max_length=10)
 
 
-class Resipe(models.Model):
+class Recipe(models.Model):
 
     class Tag(models.TextChoices):
         BREAKFAST = 'B', _('Breakfast')
@@ -19,11 +19,11 @@ class Resipe(models.Model):
         DINNER = 'D', _('Dinner')
 
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipes')
-    title = models.CharField()
+    title = models.CharField(max_length=50)
     image = models.ImageField()  # add parameters!!!
     text = models.TextField()
     ingredient = models.ManyToManyField(Ingredient)
-    tag = models.CharField(choices=Tag.choices)  # https://docs.djangoproject.com/en/3.1/ref/models/fields/#enumeration-types
+    tag = models.CharField(max_length=10, choices=Tag.choices)  # https://docs.djangoproject.com/en/3.1/ref/models/fields/#enumeration-types
     duration = models.DurationField()
-    # pub_date = models.DateTimeField("date published", auto_now_add=True)
+    pub_date = models.DateTimeField("date published", auto_now_add=True)
     slug = models.SlugField(unique=True)
