@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{% block title %}Рецепты{% endblock %}</title>
+    <title>{% block title %}{% endblock %} | Продуктовый помощник</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'pages/index.css' %}">
 </head>
@@ -17,16 +17,19 @@
         {% endblock content %}
     </main>
     {% include "footer.html" %}
+
+    {% block js-scripts %}
     <script src="{% static 'js/components/MainCards.js' %}"></script>
     
     <script src="{% static 'js/components/Purchases.js' %}"></script>
     
     <script src="{% static 'js/config/config.js' %}"></script>
     <script src="{% static 'js/components/CardList.js' %}"></script>
-    <script src="{% static 'js/components/Header.js' %}"></script>
+    {% comment %}<script src="{% static 'js/components/Header.js' %}"></script>{% endcomment %}
     
     <script src="{% static 'js/api/Api.js' %}"></script>
     <script src="{% static 'indexNotAuth.js' %}"></script>
+    {% endblock js-scripts %}
 </body>
 </html>
     
