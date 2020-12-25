@@ -1,3 +1,13 @@
+        <!-- Вывод карточек рецептов -->
 <div class="card-list">
-    
+    {% for recipe in recipes %}
+    {% include "card_on_list.html" with recipe=recipe %}
+    {% endfor %}
 </div>
+
+        <!-- Вывод паджинатора -->
+{% if page.has_other_pages %}
+{% include "paginator.html" with items=page paginator=paginator %}
+{% endif %}
+
+<script src="{% static 'js/components/CardList.js' %}"></script>
