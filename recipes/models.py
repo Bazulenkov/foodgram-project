@@ -27,3 +27,7 @@ class Recipe(models.Model):
     duration = models.DurationField()
     pub_date = models.DateTimeField("date published", auto_now_add=True)
     slug = models.SlugField(unique=True)
+
+    def __str__(self):
+        return self.title
+        
