@@ -1,5 +1,6 @@
 <div class="card" data-id="124">
-    <a href="#" class="link" target="_blank"><img src="./images/testCardImg.png" alt="Какой-то текст" class="card__image"></a>
+    {% load static %}
+    <a href="#" class="link" target="_blank"><img src="{% static 'images/testCardImg.png' %}" alt="Какой-то текст" class="card__image"></a>
     <div class="card__body">
         <a class="card__title link" href="#" target="_blank">Французские тосты</a>
         <ul class="card__items">
@@ -14,8 +15,8 @@
     </div>
     <div class="card__footer">
         <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Добавить в покупки</button>
+        {% if user.is_authenticated %}
         <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
+        {% endif %}
     </div>
 </div>
-
-<script src="{% static 'js/components/MainCards.js' %}"></script>

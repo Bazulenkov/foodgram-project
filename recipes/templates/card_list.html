@@ -1,13 +1,26 @@
         <!-- Вывод карточек рецептов -->
 <div class="card-list">
+
+    {% comment %}
+
     {% for recipe in recipes %}
     {% include "card_on_list.html" with recipe=recipe %}
     {% endfor %}
+
+    {% endcomment %}
+
+    {% include "card_on_list.html" with recipe=recipe %}
+    {% include "card_on_list.html" with recipe=recipe %}
+    {% include "card_on_list.html" with recipe=recipe %}
+    {% include "card_on_list.html" with recipe=recipe %}
+    {% include "card_on_list.html" with recipe=recipe %}
+
 </div>
 
         <!-- Вывод паджинатора -->
 {% if page.has_other_pages %}
 {% include "paginator.html" with items=page paginator=paginator %}
 {% endif %}
-
+{% load static %}
+<script src="{% static 'js/components/MainCards.js' %}"></script>
 <script src="{% static 'js/components/CardList.js' %}"></script>
