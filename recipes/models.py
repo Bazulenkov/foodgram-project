@@ -6,28 +6,93 @@ User = get_user_model()
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=20)
-    amount = models.PositiveSmallIntegerField()
-    unit = models.CharField(max_length=10)
+    """Модель ингредиента"""
+
+    title = models.CharField(max_length=50)
+    dimension = models.CharField(max_length=10)
 
 
 class Recipe(models.Model):
+    """Модель рецепта"""
 
     class Tag(models.TextChoices):
-        BREAKFAST = 'B', _('Breakfast')
-        LUNCH = 'L', _('Lunch')
-        DINNER = 'D', _('Dinner')
+        BREAKFAST = "B", _("Breakfast")
+        LUNCH = "L", _("Lunch")
+        DINNER = "D", _("Dinner")
 
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipes')
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="recipes"
+    )
     title = models.CharField(max_length=50)
     image = models.ImageField()  # add parameters!!!
     text = models.TextField()
-    ingredient = models.ManyToManyField(Ingredient)
-    tag = models.CharField(max_length=10, choices=Tag.choices)  # https://docs.djangoproject.com/en/3.1/ref/models/fields/#enumeration-types
+    ingredients = models.ManyToManyField(
+        Ingredient, through="RecipeIngredient"
+    )
+    tag = models.CharField(
+        max_length=10, choices=Tag.choices
+    )  # https://docs.djangoproject.com/en/3.1/ref/models/fields/#enumeration-types
     duration = models.DurationField()
     pub_date = models.DateTimeField("date published", auto_now_add=True)
     slug = models.SlugField(unique=True)
 
+    class Meta:
+        # в одном рецепте не может один ингредиент встречаться несколько раз
+        # constraints = [
+        #     models.UniqueConstraint(
+        #         fields=["ingredients"], name="unique_ingredient"
+        #     )
+        # ]
+
+        # - если везде надо будет упорядочивать по дате, можно попробовать так сделать.
+        ordering = ["-pub_date"]
+        # и тогда убрать ordering во view
+
     def __str__(self):
         return self.title
-        
+
+
+class RecipeIngredient(models.Model):
+    """
+    Модель, связывающая рецепт и ингредиент, \
+     в этой таблице будет хранится кол-во ингредиента в рецепте.
+    https://docs.djangoproject.com/en/3.1/topics/db/models/#extra-fields-on-many-to-many-relationships
+    """
+
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
+    amount = models.PositiveSmallIntegerField()
+
+
+class Follow(models.Model):
+    """Модель подписки на авторов"""
+
+    # можно попробовать переопределить модель User и туда вставить
+    # follower = models.ManyToManyField("self", symmetrical=False)
+    # https://docs.djangoproject.com/en/3.1/ref/models/fields/#django.db.models.ManyToManyField.symmetrical
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="follower"
+    )
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="following"
+    )
+
+    class Meta:
+        unique_together = ["user", "author"]
+
+    def __str__(self):
+        return f"{self.user}-{self.author}"
+
+
+class Favorite(models.Model):
+    """Модель избранных рецептов"""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ["user", "recipe"]
+
+    def __str__(self):
+        return f"{self.user}-{self.recipe}"
