@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import render
+from django.views.generic import CreateView
 
 from .models import Recipe
 
@@ -31,5 +32,35 @@ def subscriptions(request):
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
     return render(
-        request, "follow.html", {"page": page, "paginator": paginator}
+        request, "myFollow.html", {"page": page, "paginator": paginator}
     )
+
+
+@login_required
+def favorites(request):
+    """ Выводит список избранных рецептов """
+    # TODO переписать!!!!
+    recipe_list = Recipe.objects.filter(
+        author__following__user=request.user
+    ).order_by("-pub_date")
+    paginator = Paginator(recipe_list, 3)
+    page_number = request.GET.get("page")
+    page = paginator.get_page(page_number)
+    return render(
+        request, "favorite.html", {"page": page, "paginator": paginator}
+    )
+
+
+def purchases(request):
+    return render(request, "shopList.html")
+
+
+# @login_required
+# def new_recipe(request):
+#     pass
+
+
+class RecipeView(CreateView):
+    form_class = Recipe
+    success_url = ""
+    template_name = "formRecipe.html"
