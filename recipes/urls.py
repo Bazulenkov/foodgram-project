@@ -16,8 +16,10 @@ urlpatterns = [
     
     # path("<username>/",), # страница пользователя (профайл)
     
-    path("recipe/new/", views.RecipeView.as_view(), name="new_recipe"),
-    # path("reсipe/<slug:slug>/",),  # страница рецепта
+    path("recipe/add/", views.RecipeCreate.as_view(), name="new_recipe"),
+    path("reсipe/<slug:slug>/update", views.RecipeUpdate.as_view(), name="recipe_update"),
+    path("reсipe/<slug:slug>/delete", views.RecipeDelete.as_view(), name="recipe_delete"),
+    path("reсipe/<slug:slug>", views.RecipeView.as_view(), name="recipe_view"),
     
     path("", views.index, name="index")  # главная страница (все рецепты по дате)
 ]

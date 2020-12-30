@@ -14,6 +14,7 @@ class SignUp(CreateView):
     template_name = "signup.html"
 
     def form_valid(self, form):
+        """If the form is valid, save the associated model and login"""
         # Переписал этот метод, чтобы сразу после регистрации пользователь
         # становился залогиненным.
         valid = super().form_valid(form)

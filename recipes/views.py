@@ -1,8 +1,11 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.shortcuts import render
-from django.views.generic import CreateView
+from django.urls import reverse_lazy
+from django.views.generic.edit import FormView, CreateView, DeleteView, UpdateView
 
+# from .forms import RecipeForm
 from .models import Recipe
 
 
@@ -60,7 +63,24 @@ def purchases(request):
 #     pass
 
 
-class RecipeView(CreateView):
-    form_class = Recipe
-    success_url = ""
-    template_name = "formRecipe.html"
+class RecipeCreate(LoginRequiredMixin, CreateView):
+    model = Recipe
+    template_name = "recipe_form.html"
+    fields = ["title", "image", "text", "ingredients", "tag", "duration"]
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+class RecipeView(FormView):
+    pass
+
+class RecipeUpdate(UpdateView):
+    model = Recipe
+    template_name = "recipe_form.html"
+    fields = ["title", "image", "text", "ingredients", "tag", "duration"]
+
+
+class RecipeDelete(DeleteView):
+    model = Recipe
+    success_url = reverse_lazy("recipe-list")
