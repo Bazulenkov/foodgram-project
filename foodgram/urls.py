@@ -22,5 +22,6 @@ urlpatterns = [
     #  ищем совпадения в файле django.contrib.auth.urls
     path("auth/", include("django.contrib.auth.urls")),
     path("admin/", admin.site.urls),
+    path("api/", include("api.urls")),
     path("", include("recipes.urls")),
 ]
