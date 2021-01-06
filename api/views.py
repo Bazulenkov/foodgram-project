@@ -12,7 +12,7 @@ User = get_user_model()
 
 class Favorites(LoginRequiredMixin, View):
     """Функция добавления/удаления рецепта в "Избранное"."""
-
+    
     def post(self, request):
         req_ = json.loads(request.body)
         recipe_id = req_.get("id", None)
@@ -31,5 +31,5 @@ class Favorites(LoginRequiredMixin, View):
         recipe = get_object_or_404(
             Favorite, user=request.user, recipe=recipe_id
         )
-        recipe.objects.delete()
+        recipe.delete()
         return JsonResponse({"success": True})
