@@ -16,5 +16,5 @@ urlpatterns = [
     path("reсipe/<slug:slug>/delete", views.RecipeDelete.as_view(), name="recipe_delete"),
     path("reсipe/<slug:slug>", views.RecipeView.as_view(), name="recipe_view"),
 
-    path("", views.index, name="index")  # главная страница (все рецепты по дате)
+    path("", views.RecipeListView.as_view(), name="index")  # главная страница (все рецепты по дате)
 ]

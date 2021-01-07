@@ -35,7 +35,7 @@ class Recipe(models.Model):
     )  # https://docs.djangoproject.com/en/3.1/ref/models/fields/#enumeration-types
     duration = models.DurationField()
     pub_date = models.DateTimeField("date published", auto_now_add=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, auto_created=True)
 
     class Meta:
         # в одном рецепте не может один ингредиент встречаться несколько раз
@@ -45,9 +45,7 @@ class Recipe(models.Model):
         #     )
         # ]
 
-        # - если везде надо будет упорядочивать по дате, можно попробовать так сделать.
         ordering = ["-pub_date"]
-        # и тогда убрать ordering во view
 
     def __str__(self):
         return self.title
@@ -66,6 +64,10 @@ class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     amount = models.PositiveSmallIntegerField()
+
+    class Meta:
+        # в одном рецепте не может один ингредиент встречаться несколько раз
+        unique_together = ["recipe", "ingredient"]
 
 
 class Follow(models.Model):

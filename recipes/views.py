@@ -3,7 +3,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic.edit import FormView, CreateView, DeleteView, UpdateView
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.list import ListView
 
 # from .forms import RecipeForm
 from .models import Recipe
@@ -23,6 +25,14 @@ def index(request):
     return render(
         request, "index.html", {"page": page, "paginator": paginator}
     )
+
+
+class RecipeListView(ListView):
+    """Выводит список всех рецептов на главную страницу"""
+    template_name = "index.html"
+    queryset = Recipe.objects.all()
+    context_object_name = "recipe_list"
+    paginate_by = 6
 
 
 @login_required
@@ -72,8 +82,13 @@ class RecipeCreate(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
-class RecipeView(FormView):
-    pass
+
+class RecipeView(DetailView):
+    model = (
+        Recipe  # https://docs.djangoproject.com/en/3.1/ref/class-based-views/
+    )
+    template_name = "recipe_detail.html"
+
 
 class RecipeUpdate(UpdateView):
     model = Recipe
