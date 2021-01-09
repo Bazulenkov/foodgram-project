@@ -45,5 +45,5 @@ class IngredientList(ReadOnlyModelViewSet):
 
     def get_queryset(self):
         url_parameter = self.request.GET.get("query")
-        queryset = Ingredient.objects.filter(title__startswith=url_parameter)
+        queryset = Ingredient.objects.filter(title__istartswith=url_parameter)
         return queryset

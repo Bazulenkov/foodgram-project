@@ -7,7 +7,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
-# from .forms import RecipeForm
+from .forms import RecipeForm
 from .models import Recipe
 
 
@@ -74,9 +74,10 @@ def purchases(request):
 
 
 class RecipeCreate(LoginRequiredMixin, CreateView):
-    model = Recipe
+    # model = Recipe
+    form_class = RecipeForm
     template_name = "recipe_form.html"
-    fields = ["title", "image", "text", "ingredients", "tag", "duration"]
+    # fields = ["title", "image", "text", "ingredients", "tag", "duration"]
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -91,6 +92,7 @@ class RecipeView(DetailView):
 
 
 class RecipeUpdate(UpdateView):
+    form_class = RecipeForm
     model = Recipe
     template_name = "recipe_form.html"
     fields = ["title", "image", "text", "ingredients", "tag", "duration"]

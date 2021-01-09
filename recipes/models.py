@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -13,29 +14,37 @@ class Ingredient(models.Model):
     dimension = models.CharField(max_length=10)
 
 
+class Tag(models.Model):
+    """Модель тэга"""
+
+    name = models.CharField(max_length=8)
+
+    def __str__(self):
+        return self.name
+
+
 class Recipe(models.Model):
     """Модель рецепта"""
 
-    class Tag(models.TextChoices):
-        BREAKFAST = "B", _("Breakfast")
-        LUNCH = "L", _("Lunch")
-        DINNER = "D", _("Dinner")
+    # class Tag(models.TextChoices):
+    #     BREAKFAST = "B", _("Breakfast")
+    #     LUNCH = "L", _("Lunch")
+    #     DINNER = "D", _("Dinner")
 
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="recipes"
     )
-    title = models.CharField(max_length=50)
-    image = models.ImageField()  # add parameters!!!
-    text = models.TextField()
+    title = models.CharField(verbose_name="Название рецепта", max_length=50)
+    tag = models.ManyToManyField(Tag, blank=True)
+    # tag = models.CharField(max_length=10, choices=Tag.choices)  # https://docs.djangoproject.com/en/3.1/ref/models/fields/#enumeration-types
     ingredients = models.ManyToManyField(
         Ingredient, through="RecipeIngredient"
     )
-    tag = models.CharField(
-        max_length=10, choices=Tag.choices
-    )  # https://docs.djangoproject.com/en/3.1/ref/models/fields/#enumeration-types
+    description = models.TextField()
     duration = models.DurationField()
+    image = models.ImageField(upload_to="recipes/")
     pub_date = models.DateTimeField("date published", auto_now_add=True)
-    slug = models.SlugField(unique=True, auto_created=True)
+    slug = models.SlugField(unique=True)
 
     class Meta:
         # в одном рецепте не может один ингредиент встречаться несколько раз
@@ -51,7 +60,13 @@ class Recipe(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('reсipe', kwargs={'slug': self.slug})
+        return reverse("reсipe", kwargs={"slug": self.slug})
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+
+        super().save(*args, **kwargs)
 
 
 class RecipeIngredient(models.Model):

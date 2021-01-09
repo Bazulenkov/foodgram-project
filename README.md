@@ -5,6 +5,9 @@ foodgram-project
 
 `./manage.py makemigrations`  
 `./manage.py migrate`  
+
+Импортируйте теги в базу - выполните команду `./manage.py load_tags`  
+
 Чтобы импортировать ингридиенты из файла `ingredients.json` - выполните команду
 `./manage.py import_ingredients_from_json_file`
 
