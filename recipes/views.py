@@ -77,10 +77,13 @@ class RecipeCreate(LoginRequiredMixin, CreateView):
     # model = Recipe
     form_class = RecipeForm
     template_name = "recipe_form.html"
-    # fields = ["title", "image", "text", "ingredients", "tag", "duration"]
+    # fields = ["title", "tag", "ingredients",  "duration", "description", "image"]
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+
+        ingredients = self.request.POST['ingredients']
+
         return super().form_valid(form)
 
 

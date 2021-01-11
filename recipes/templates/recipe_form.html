@@ -32,7 +32,7 @@
                         <span class="form__error">{{ form.title.errors }}</span>
                     </div>
                 </div>
-                <div class="form__group">
+                <!-- <div class="form__group">
                     <p class="form__label">Теги</p>
                     <div class="form__field-group">
                         <div class="tags">
@@ -45,11 +45,35 @@
                                 <label for="id_lunch" class="tags__label">Обед</label>
                             </div>
                             <div class="tags__item">
-                                <input type="checkbox" name="tag" id="id_dinner" value="3" class="tags__checkbox tags__checkbox_style_purple" checked>
+                                <input type="checkbox" name="tag" id="id_dinner" value="3" class="tags__checkbox tags__checkbox_style_purple" {{ if form.tag.checked>
                                 <label for="id_dinner" class="tags__label">Ужин</label>
                             </div>
                         </div>
+                
+                        {{ form.tag }}
                         <span class="form__error">{{ form.tag.errors }}</span>
+                    </div>
+                </div>-->
+
+
+                <div class="form__group">
+                    <p class="form__label">Теги</p>
+                    <div class="form__field-group">
+                        <div class="tags">
+                            <div class="tags__item">
+                                <input type="checkbox" name="breakfast" id="id_breakfast" class="tags__checkbox tags__checkbox_style_orange" {% if 'breakfast' in form.tags.value %}checked{% endif %}>
+                                <label for="id_breakfast" class="tags__label">Завтрак</label>
+                            </div>
+                            <div class="tags__item">
+                                <input type="checkbox" name="lunch" id="id_lunch" class="tags__checkbox tags__checkbox_style_green" {% if 'lunch' in form.tags.value %}checked{% endif %}>
+                                <label for="id_lunch" class="tags__label">Обед</label>
+                            </div>
+                            <div class="tags__item">
+                                <input type="checkbox" name="dinner" id="id_dinner" class="tags__checkbox tags__checkbox_style_purple" {% if 'dinner' in form.tags.value %}checked{% endif %}>
+                                <label for="id_dinner" class="tags__label">Ужин</label>
+                            </div>
+                        </div>
+                        <span class="form__error">{{ form.tags.errors }}</span>
                     </div>
                 </div>
                 <div class="form__group">
@@ -91,7 +115,7 @@
                         <input type="file" name="image" id="id_file" accept="image/*">
                         <span class="form__error">{{ form.image.errors }}</span>
                     </div>
-                </div>
+                </div> 
                 <div class="form__footer">
                     <button class="button button_style_blue">Создать рецепт</button>
                 </div>

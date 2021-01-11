@@ -14,13 +14,13 @@ class Ingredient(models.Model):
     dimension = models.CharField(max_length=10)
 
 
-class Tag(models.Model):
-    """Модель тэга"""
+# class Tag(models.Model):
+#     """Модель тэга"""
 
-    name = models.CharField(max_length=8)
+#     name = models.CharField(max_length=8)
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
 
 class Recipe(models.Model):
@@ -31,12 +31,19 @@ class Recipe(models.Model):
     #     LUNCH = "L", _("Lunch")
     #     DINNER = "D", _("Dinner")
 
+    TAG_CHOICES = [
+        ('breakfast', 'Breakfast'),
+        ('lunch', 'Lunch'),
+        ('dinner', 'Dinner')
+    ]
+
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="recipes"
     )
     title = models.CharField(verbose_name="Название рецепта", max_length=50)
-    tag = models.ManyToManyField(Tag, blank=True)
-    # tag = models.CharField(max_length=10, choices=Tag.choices)  # https://docs.djangoproject.com/en/3.1/ref/models/fields/#enumeration-types
+    # tag = models.ManyToManyField(Tag, blank=True)
+    tag = models.CharField(max_length=100, choices=TAG_CHOICES)  # https://docs.djangoproject.com/en/3.1/ref/models/fields/#enumeration-types
+    # tag = models.TextChoices(Tag.choices)
     ingredients = models.ManyToManyField(
         Ingredient, through="RecipeIngredient"
     )
