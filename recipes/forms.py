@@ -36,3 +36,4 @@ class RecipeForm(ModelForm):
             # for item in ingredients:
               #тут про ингридиенты        
         super().__init__(data=data, *args, **kwargs)
+        self.fields["duration", "description"].widget.attrs.update({"class": ""})
