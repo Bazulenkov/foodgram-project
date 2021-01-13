@@ -26,24 +26,11 @@ class Ingredient(models.Model):
 class Recipe(models.Model):
     """Модель рецепта"""
 
-    # class Tag(models.TextChoices):
-    #     BREAKFAST = "B", _("Breakfast")
-    #     LUNCH = "L", _("Lunch")
-    #     DINNER = "D", _("Dinner")
-
-    TAG_CHOICES = [
-        ('breakfast', 'Breakfast'),
-        ('lunch', 'Lunch'),
-        ('dinner', 'Dinner')
-    ]
-
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="recipes"
     )
     title = models.CharField(verbose_name="Название рецепта", max_length=50)
-    # tag = models.ManyToManyField(Tag, blank=True)
-    tag = models.CharField(max_length=100, choices=TAG_CHOICES)  # https://docs.djangoproject.com/en/3.1/ref/models/fields/#enumeration-types
-    # tag = models.TextChoices(Tag.choices)
+    tag = models.CharField(max_length=10)  # https://docs.djangoproject.com/en/3.1/ref/models/fields/#enumeration-types
     ingredients = models.ManyToManyField(
         Ingredient, through="RecipeIngredient"
     )
@@ -67,7 +54,7 @@ class Recipe(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse("reсipe", kwargs={"slug": self.slug})
+        return reverse("recipe", kwargs={"slug": self.slug})
 
     def save(self, *args, **kwargs):
         if not self.slug:

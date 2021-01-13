@@ -81,8 +81,8 @@ class RecipeCreate(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-
-        ingredients = self.request.POST['ingredients']
+        form.instance.tag = "".join(form.cleaned_data["tag"])
+        #ingredients = self.request.POST['ingredients']
 
         return super().form_valid(form)
 
