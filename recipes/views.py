@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
+from django.http import request
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic.detail import DetailView
@@ -8,7 +9,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 from .forms import RecipeForm
-from .models import Recipe
+from .models import Recipe, Ingredient
 
 
 def index(request):
@@ -29,6 +30,7 @@ def index(request):
 
 class RecipeListView(ListView):
     """Выводит список всех рецептов на главную страницу"""
+
     template_name = "index.html"
     queryset = Recipe.objects.all()
     context_object_name = "recipe_list"
@@ -68,21 +70,30 @@ def purchases(request):
     return render(request, "shopList.html")
 
 
-# @login_required
-# def new_recipe(request):
-#     pass
-
-
 class RecipeCreate(LoginRequiredMixin, CreateView):
     # model = Recipe
     form_class = RecipeForm
     template_name = "recipe_form.html"
     # fields = ["title", "tag", "ingredients",  "duration", "description", "image"]
 
+    def get_ingredients(self, data):
+        result = []
+        for key, value in data.items():
+            if "nameIngredient" in key:
+                nameIngredient = value
+            elif "valueIngredient" in key:
+                valueIngredient = value
+            elif "unitsIngredient" in key:
+                ingredient = Ingredient.objects.filter(
+                    title=nameIngredient, dimension=value
+                ).first()
+                result.append([ingredient, valueIngredient])
+        return result
+
     def form_valid(self, form):
         form.instance.author = self.request.user
 
-        ingredients = self.request.POST['ingredients']
+        ingredients = self.get_ingredients(self.request.POST)
 
         return super().form_valid(form)
 

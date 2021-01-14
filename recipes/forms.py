@@ -22,7 +22,7 @@ class RecipeForm(ModelForm):
         fields = (
             "title",
             "tag",
-            "ingredients",
+            # "ingredients",
             "duration",
             "description",
             "image",
@@ -31,31 +31,28 @@ class RecipeForm(ModelForm):
         # field_classes = {"tag": MultipleChoiceField}
         # widgets = {"tag": CheckboxSelectMultiple}
 
-    def __init__(self, data=None, *args, **kwargs):
-        if data is not None:
-            data = data.copy()  # make it mutable
-            # for tag in ("breakfast", "lunch", "dinner"):
-            #     if tag in data:
-            #         data.update({"tag": tag})
-            ingredients = self.get_ingredients(data)
-            # for item in ingredients:
-            # тут про ингридиенты
-        super().__init__(data=data, *args, **kwargs)
+    # def __init__(self, data=None, *args, **kwargs):
+    #     if data is not None:
+    #         data = data.copy()  # make it mutable
+    #         # for tag in ("breakfast", "lunch", "dinner"):
+    #         #     if tag in data:
+    #         #         data.update({"tag": tag})
+    #         ingredients = self.get_ingredients(data)
+    #         data.update({"ingredients": ingredients})
+    #         # for item in ingredients:
+    #         # тут про ингридиенты
+    #     super().__init__(data=data, *args, **kwargs)
         # self.fields["duration"].widget.attrs.update({"class": "form__input"})
 
-    def get_ingredients(self, data):
-        result = []
-        for key, value in data.items():
-            if "nameIngredient" in key:
-                nameIngredient = value
-            elif "valueIngredient" in key and nameIngredient:
-                valueIngredient = value
-            elif "unitsIngredient" in key and nameIngredient and valueIngredient:
-                result.append(tuple(nameIngredient, valueIngredient, value))
-                nameIngredient = valueIngredient = None
-        return result
-                
-                # ingredient = get_object_or_404(Ingredient, title=nameIngredient, dimension=value)
+
+
+    # def clean_ingredients(self):
+    #     data = self.cleaned_data["ingredients"]
+    #     return data
+
+    def form_valid(self, form):
+        ingredients = self.get_ingredients(data)
+
                 # recipe_ingredient = RecipeIngredient.objects.create(recipe=, ingredient=ingredient, amount=valueIngredient)
                 # # or
                 # recipe_ingredient = RecipeIngredient(ingredient=ingredient, amount=valueIngredient)
