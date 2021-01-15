@@ -1,17 +1,16 @@
-from django.forms import ModelForm, ModelMultipleChoiceField
+from django import forms
 from django.forms import widgets
 from django.forms.widgets import CheckboxSelectMultiple, Widget
-from django.shortcuts import get_object_or_404
 
 # from django.forms.widgets import CheckboxSelectMultiple
 
 from .models import Ingredient, Recipe, Tag, RecipeIngredient
 
 
-class RecipeForm(ModelForm):
+class RecipeForm(forms.ModelForm):
     """ Форма модели Recipe, добавляем через нее новый рецепт и редактируем имеющющийся рецепт """
 
-    tag = ModelMultipleChoiceField(
+    tag = forms.ModelMultipleChoiceField(
         queryset=Tag.objects.all(),
         to_field_name="slug",
         # widget=CheckboxSelectMultiple,
@@ -31,6 +30,17 @@ class RecipeForm(ModelForm):
         # field_classes = {"tag": MultipleChoiceField}
         # widgets = {"tag": CheckboxSelectMultiple}
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        ingredients = RecipeIngredient.objects.filter(recipe=self.instance)
+        for i in range(len(ingredients)):
+            field_name = "ingredient_%s" % (i,)
+            self.fields[field_name] = forms.CharField(required=False)
+            try:
+                self.initial[field_name] = ingredients[i].ingredient
+            except IndexError:
+                self.initial[field_name] = ""
+
     # def __init__(self, data=None, *args, **kwargs):
     #     if data is not None:
     #         data = data.copy()  # make it mutable
@@ -44,16 +54,38 @@ class RecipeForm(ModelForm):
     #     super().__init__(data=data, *args, **kwargs)
         # self.fields["duration"].widget.attrs.update({"class": "form__input"})
 
-
+    def clean(self):
+        ingredients = set()
+        i = 0
+        field_name = "ingredient_%s" % (i,)
+        while self.cleaned_data.get(field_name):
+            ingredient = self.cleaned_data[field_name]
+            if ingredient in ingredients:
+                self.add_error(field_name, 'Duplicate')
+            else:
+               ingredients.add(ingredient)
+            i += 1
+            field_name = 'ingredient_%s' % (i,)
+        self.cleaned_data["ingredients"] = ingredients
 
     # def clean_ingredients(self):
     #     data = self.cleaned_data["ingredients"]
     #     return data
 
-    def form_valid(self, form):
-        ingredients = self.get_ingredients(data)
+    # def save(self):
+    #     recipe = self.instance
+    #     recipe.author = self.cleaned_data("author")
+    #     recipe.title = self.cleaned_data("title")
+    #     recipe.tag = self.cleaned_data("tag")
+    #     recipe.description = self.cleaned_data("description")
+    #     recipe.duration = self.cleaned_data("duration")
+    #     recipe.image = self.cleaned_data("image")
 
-                # recipe_ingredient = RecipeIngredient.objects.create(recipe=, ingredient=ingredient, amount=valueIngredient)
-                # # or
-                # recipe_ingredient = RecipeIngredient(ingredient=ingredient, amount=valueIngredient)
-                # recipe_ingredient.save()
+    #     recipe.ingredients_set.all().delete()
+    #     for ingredient in self.cleaned_data["ingredients"]:
+    #         RecipeIngredient.objects.create(recipe=recipe, ingredient=ingredient[0], amount=ingredient[1])
+
+    def get_ingredients_fields(self):
+        for field_name in self.fields:
+            if field_name.startswith("ingredient_"):
+                yield self(field_name)

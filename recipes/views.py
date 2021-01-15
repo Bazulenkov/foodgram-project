@@ -9,7 +9,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 from .forms import RecipeForm
-from .models import Recipe, Ingredient
+from .models import Recipe, Ingredient, RecipeIngredient
 
 
 def index(request):
@@ -76,7 +76,7 @@ class RecipeCreate(LoginRequiredMixin, CreateView):
     template_name = "recipe_form.html"
     # fields = ["title", "tag", "ingredients",  "duration", "description", "image"]
 
-    def get_ingredients(self, data):
+    def get_ingredients(self, data):  # можно убрать параметр data и дергать из self.request.POST
         result = []
         for key, value in data.items():
             if "nameIngredient" in key:
@@ -92,11 +92,27 @@ class RecipeCreate(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        # здесь надо создать 
+        self.object = form.save()
 
-        ingredients = self.get_ingredients(self.request.POST)
+        # recipeingredients = set()
+        # и потом создать записи в таблице RecipeIngredient
+
+        
+        # TODO переписать это в save() - чтобы 2 раза не делать form.save()
+        #  потом можно сделать через bulk_create() https://docs.djangoproject.com/en/3.0/ref/models/querysets/#bulk-create
+        for ingredient in self.get_ingredients(self.request.POST):
+            obj, created = RecipeIngredient.objects.get_or_create(recipe=self.object, ingredient=ingredient[0], amount=ingredient[1])
+            if not created:
+                form.add_error("Duplicate in ingrdients")
+            # else:
+            #     recipeingredients.add(obj)
+
+        # recipeingredients = RecipeIngredients.objects.filter(recipe=recipe)
+        # и потом 
+        # form.instance.ingredients_set.add(recipeingredients)
 
         return super().form_valid(form)
-
 
 class RecipeView(DetailView):
     model = (
@@ -107,9 +123,9 @@ class RecipeView(DetailView):
 
 class RecipeUpdate(UpdateView):
     form_class = RecipeForm
-    model = Recipe
+    # model = Recipe
     template_name = "recipe_form.html"
-    fields = ["title", "image", "text", "ingredients", "tag", "duration"]
+    # fields = ["title", "image", "text", "ingredients", "tag", "duration"]
 
 
 class RecipeDelete(DeleteView):

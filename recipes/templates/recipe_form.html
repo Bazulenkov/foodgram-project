@@ -83,6 +83,9 @@
                             <label for="cantidad" class="form__label" id="cantidadVal">шт.</label>
                         </div>
                         <div class="form__field-group-ingredientes-container">
+                            {% for ingredient_field in form.get_ingredient_fields %}
+                                {{ ingredient_field }}
+                            {% endfor %}
 
                         </div>
                         <span class="form__ingredient-link" id="addIng">Добавить ингредиент</span>

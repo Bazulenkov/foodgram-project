@@ -2,6 +2,8 @@ from django.urls import path
 
 from . import views
 
+# app_name = "recipes"
+
 urlpatterns = [
     path("purchases/", views.purchases, name="purchases"),  # список покупок
     # path("purchases/<int:recipe_id>/",),  # ? есть в js.api
@@ -12,9 +14,9 @@ urlpatterns = [
     # path("<username>/",), # страница пользователя (профайл)
 
     path("recipe/add/", views.RecipeCreate.as_view(), name="new_recipe"),
-    path("reсipe/<slug:slug>/update", views.RecipeUpdate.as_view(), name="recipe_update"),
-    path("reсipe/<slug:slug>/delete", views.RecipeDelete.as_view(), name="recipe_delete"),
-    path("reсipe/<slug:slug>", views.RecipeView.as_view(), name="recipe_view"),
+    path("recipe/<slug:slug>/update", views.RecipeUpdate.as_view(), name="recipe_update"),
+    path("recipe/<slug:slug>/delete", views.RecipeDelete.as_view(), name="recipe_delete"),
+    path("recipe/<slug:slug>", views.RecipeView.as_view(), name="reсipe_view"),
 
     path("", views.RecipeListView.as_view(), name="index")  # главная страница (все рецепты по дате)
 ]
