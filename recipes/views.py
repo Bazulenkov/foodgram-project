@@ -105,6 +105,7 @@ class RecipeCreate(LoginRequiredMixin, CreateView):
             obj, created = RecipeIngredient.objects.get_or_create(recipe=self.object, ingredient=ingredient[0], amount=ingredient[1])
             if not created:
                 form.add_error("Duplicate in ingrdients")
+            # или recipe.ingredients.add(ingredient=ingredient[0], through_defaults={"amount": ingredient[1]})  # https://docs.djangoproject.com/en/3.1/topics/db/models/#extra-fields-on-many-to-many-relationships
             # else:
             #     recipeingredients.add(obj)
 

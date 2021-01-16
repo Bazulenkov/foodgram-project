@@ -51,10 +51,10 @@ class Recipe(models.Model):
         User, on_delete=models.CASCADE, related_name="recipes"
     )
     title = models.CharField(verbose_name="Название рецепта", max_length=50)
-    tag = models.ManyToManyField(Tag, blank=True, related_name="tags")
+    tag = models.ManyToManyField(Tag, blank=True, related_name="recipes")
     # tag = models.CharField(max_length=100, choices=TAG_CHOICES)  # https://docs.djangoproject.com/en/3.1/ref/models/fields/#enumeration-types
     ingredients = models.ManyToManyField(
-        Ingredient, through="RecipeIngredient", related_name="ingredients"
+        Ingredient, through="RecipeIngredient", related_name="recipes"
     )
     description = models.TextField(verbose_name="Описание")
     duration = models.DurationField(verbose_name="Время приготовления")

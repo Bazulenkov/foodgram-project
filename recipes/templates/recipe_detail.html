@@ -22,9 +22,8 @@
                     {% endif %}
                 </div>
                 <ul class="single-card__items">
-                    <liclass="single-card__item"><span class="badge badge_style_{{ tag.color }}">{{ recipe.tags }}</span></li>
-                    {% for tag in recipe.tags %}
-                    <li class="single-card__item"><span class="badge badge_style_{{ tag.color }}">{{ tag.instance.title }}</span></li>
+                    {% for tag in recipe.tag.all %}
+                    <li class="single-card__item"><span class="badge badge_style_{{ tag.color }}">{{ tag.title }}</span></li>
                     {% endfor %}
                     <!-- <li class="single-card__item"><span class="badge badge_style_orange">Завтрак</span></li>
                     <li class="single-card__item"><span class="badge badge_style_purple">Ужин</span></li> -->
@@ -49,7 +48,9 @@
                 <div class="single-card__section">
                     <h3 class="single-card__section-title">Ингридиенты:</h3>
                     <div class="single-card__items single-card__items_column">
-                        <p class=" single-card__section-item">{{ recipe.ingredients }}</p>
+                        {% for ingredient in recipe.ingredients.all %}
+                        <p class=" single-card__section-item">{{ ingredient.title }} - {{ ingredient.through.amount }} {{ ingredient.dimension }}</p>
+                        {% endfor %}
                         <p class=" single-card__section-item">Молоко - 200 мл.</p>
                         <p class=" single-card__section-item">Тосты - 4 шт.</p>
                         <p class=" single-card__section-item">Сахар 2 сл.л.</p>
