@@ -124,7 +124,7 @@ class RecipeView(DetailView):
 
 class RecipeUpdate(UpdateView):
     form_class = RecipeForm
-    # model = Recipe
+    model = Recipe
     template_name = "recipe_form.html"
     # fields = ["title", "image", "text", "ingredients", "tag", "duration"]
 

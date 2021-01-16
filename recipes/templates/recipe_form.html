@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Создание рецепта{% endblock %}
+{% block title %}{% if form.instance %}Редактирование{% else %}Создание{%endif%} рецепта{% endblock %}
 {% load static %}
 {% block css %}{% static 'pages/form.css' %}{% endblock %}
 
@@ -9,7 +9,7 @@
 
     <main class="main container">
         <div class="main__header">
-            <h1 class="main__title">Создание рецепта</h1>
+            <h1 class="main__title">{% if form.instance %}Редактирование{% else %}Создание{%endif%} рецепта</h1>
         </div>
         <div class="form-container">
             <form class="form" method="post" enctype="multipart/form-data" action="{% url 'new_recipe' %}">
@@ -83,7 +83,7 @@
                             <label for="cantidad" class="form__label" id="cantidadVal">шт.</label>
                         </div>
                         <div class="form__field-group-ingredientes-container">
-                            {% for ingredient_field in form.get_ingredient_fields %}
+                            {% for ingredient_field in form.get_ingredients_fields %}
                                 {{ ingredient_field }}
                             {% endfor %}
 

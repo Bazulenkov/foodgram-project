@@ -34,12 +34,16 @@ class RecipeForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         ingredients = RecipeIngredient.objects.filter(recipe=self.instance)
         for i in range(len(ingredients)):
-            field_name = "ingredient_%s" % (i,)
-            self.fields[field_name] = forms.CharField(required=False)
+            field_nameIngredient = "nameIngredient_%s" % (i,)
+            # self.fields[field_name] = forms.CharField(required=False)
+            field_valueIngredient = "valueIngredient_%s" % (i,)
+            field_unitsIngredient = "unitsIngredient_%s" % (i,)
             try:
-                self.initial[field_name] = ingredients[i].ingredient
+                self.initial[field_nameIngredient] = ingredients[i].ingredient.title
+                self.initial[field_valueIngredient] = ingredients[i].amount
+                self.initial[field_unitsIngredient] = ingredients[i].ingredient.dimension
             except IndexError:
-                self.initial[field_name] = ""
+                self.initial[field_nameIngredient] = ""
 
     # def __init__(self, data=None, *args, **kwargs):
     #     if data is not None:
@@ -87,5 +91,5 @@ class RecipeForm(forms.ModelForm):
 
     def get_ingredients_fields(self):
         for field_name in self.fields:
-            if field_name.startswith("ingredient_"):
+            if field_name.contains("ingredient_"):
                 yield self(field_name)
