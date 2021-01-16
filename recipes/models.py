@@ -57,7 +57,7 @@ class Recipe(models.Model):
         Ingredient, through="RecipeIngredient", related_name="recipes"
     )
     description = models.TextField(verbose_name="Описание")
-    duration = models.DurationField(verbose_name="Время приготовления")
+    duration = models.PositiveSmallIntegerField(verbose_name="Время приготовления")
     image = models.ImageField(upload_to="recipes/")
     pub_date = models.DateTimeField("date published", auto_now_add=True)
     slug = models.SlugField(unique=True)
