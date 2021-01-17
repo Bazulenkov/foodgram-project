@@ -35,9 +35,12 @@ class RecipeForm(forms.ModelForm):
         ingredients = RecipeIngredient.objects.filter(recipe=self.instance)
         for i in range(len(ingredients)):
             field_nameIngredient = "nameIngredient_%s" % (i,)
-            # self.fields[field_name] = forms.CharField(required=False)
+            self.fields[field_nameIngredient] = forms.CharField(required=False)
+            self.fields[field_nameIngredient].widget.attrs.update({type: "hidden"})
             field_valueIngredient = "valueIngredient_%s" % (i,)
+            self.fields[field_valueIngredient] = forms.CharField(required=False)
             field_unitsIngredient = "unitsIngredient_%s" % (i,)
+            self.fields[field_unitsIngredient] = forms.CharField(required=False)
             try:
                 self.initial[field_nameIngredient] = ingredients[i].ingredient.title
                 self.initial[field_valueIngredient] = ingredients[i].amount
@@ -91,5 +94,5 @@ class RecipeForm(forms.ModelForm):
 
     def get_ingredients_fields(self):
         for field_name in self.fields:
-            if field_name.contains("ingredient_"):
-                yield self(field_name)
+            if "Ingredient_" in field_name:
+                yield self[field_name]

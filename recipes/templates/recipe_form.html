@@ -84,7 +84,12 @@
                         </div>
                         <div class="form__field-group-ingredientes-container">
                             {% for ingredient_field in form.get_ingredients_fields %}
+                            <div class="form__field-item-ingredient" id="ing_{{ ingredient_field.name[-1] }}"><span> цесарка тушка 2г</span> <span class="form__field-item-delete"></span>
+                                <input id="nameIngredient_1" name="nameIngredient_1" type="hidden" value="цесарка тушка">
+                                <input id="valueIngredient_1" name="valueIngredient_1" type="hidden" value="2">
+                                <input id="unitsIngredient_1" name="unitsIngredient_1" type="hidden" value="г">
                                 {{ ingredient_field }}
+                            </div>
                             {% endfor %}
 
                         </div>
