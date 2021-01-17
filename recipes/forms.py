@@ -7,6 +7,38 @@ from django.forms.widgets import CheckboxSelectMultiple, Widget
 from .models import Ingredient, Recipe, Tag, RecipeIngredient
 
 
+class IngredientMultiWidget(forms.MultiWidget):
+    def __init__(self, attrs=None) -> None:
+        widgets = {
+            forms.TextInput(attrs=attrs),
+            forms.TextInput(attrs=attrs),
+            forms.TextInput(attrs=attrs),
+        }
+        super().__init__(widgets, attrs)
+
+    def decompress(self, value):
+        if value:
+            return [value.ingredient.title, value.amount, value.ingredient.dimension]
+        return ["Nothing", "Nothing", "Nothing"]
+
+
+class IngredientMultiField(forms.MultiValueField):
+    widget = IngredientMultiWidget
+
+    def __init__(self, modelingredient=None, *args, **kwargs) -> None:
+            
+            fields = (
+                forms.fields.CharField(max_length=50),
+                forms.fields.CharField(max_length=50),
+                forms.fields.CharField(max_length=50),
+            )
+            super().__init__(fields, *args, **kwargs)
+
+    def compress(self, data_list):
+        if data_list:
+            return ":::",join(data_list)
+        return ""
+
 class RecipeForm(forms.ModelForm):
     """ Форма модели Recipe, добавляем через нее новый рецепт и редактируем имеющющийся рецепт """
 
@@ -34,19 +66,34 @@ class RecipeForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         ingredients = RecipeIngredient.objects.filter(recipe=self.instance)
         for i in range(len(ingredients)):
-            field_nameIngredient = "nameIngredient_%s" % (i,)
-            self.fields[field_nameIngredient] = forms.CharField(required=False)
-            self.fields[field_nameIngredient].widget.attrs.update({type: "hidden"})
-            field_valueIngredient = "valueIngredient_%s" % (i,)
-            self.fields[field_valueIngredient] = forms.CharField(required=False)
-            field_unitsIngredient = "unitsIngredient_%s" % (i,)
-            self.fields[field_unitsIngredient] = forms.CharField(required=False)
-            try:
-                self.initial[field_nameIngredient] = ingredients[i].ingredient.title
-                self.initial[field_valueIngredient] = ingredients[i].amount
-                self.initial[field_unitsIngredient] = ingredients[i].ingredient.dimension
-            except IndexError:
-                self.initial[field_nameIngredient] = ""
+            field_name = "ingredient_%s" % (i,)
+            self.fields[field_name] = IngredientMultiField(required=False, modelingredient=ingredients[i], initial=ingredients[i])
+            self.fields[field_name].widget.attrs.update({"hidden": True})
+            # self.initial[]
+
+            # field_nameIngredient = "nameIngredient_%s" % (i,)
+            # self.fields[field_nameIngredient] = forms.CharField(required=False)
+            # self.fields[field_nameIngredient].widget.attrs.update(
+            #     {type: "hidden"}
+            # )
+            # field_valueIngredient = "valueIngredient_%s" % (i,)
+            # self.fields[field_valueIngredient] = forms.CharField(
+            #     required=False
+            # )
+            # field_unitsIngredient = "unitsIngredient_%s" % (i,)
+            # self.fields[field_unitsIngredient] = forms.CharField(
+            #     required=False
+            # )
+            # try:
+            #     self.initial[field_nameIngredient] = ingredients[
+            #         i
+            #     ].ingredient.title
+            #     self.initial[field_valueIngredient] = ingredients[i].amount
+            #     self.initial[field_unitsIngredient] = ingredients[
+            #         i
+            #     ].ingredient.dimension
+            # except IndexError:
+            #     self.initial[field_nameIngredient] = ""
 
     # def __init__(self, data=None, *args, **kwargs):
     #     if data is not None:
@@ -59,21 +106,21 @@ class RecipeForm(forms.ModelForm):
     #         # for item in ingredients:
     #         # тут про ингридиенты
     #     super().__init__(data=data, *args, **kwargs)
-        # self.fields["duration"].widget.attrs.update({"class": "form__input"})
+    # self.fields["duration"].widget.attrs.update({"class": "form__input"})
 
-    def clean(self):
-        ingredients = set()
-        i = 0
-        field_name = "ingredient_%s" % (i,)
-        while self.cleaned_data.get(field_name):
-            ingredient = self.cleaned_data[field_name]
-            if ingredient in ingredients:
-                self.add_error(field_name, 'Duplicate')
-            else:
-               ingredients.add(ingredient)
-            i += 1
-            field_name = 'ingredient_%s' % (i,)
-        self.cleaned_data["ingredients"] = ingredients
+    # def clean(self):
+    #     ingredients = set()
+    #     i = 0
+    #     field_name = "ingredient_%s" % (i,)
+    #     while self.data.get(field_name):
+    #         ingredient = self.data[field_name]
+    #         if ingredient in ingredients:
+    #             self.add_error(field_name, "Duplicate")
+    #         else:
+    #             ingredients.add(ingredient)
+    #         i += 1
+    #         field_name = "ingredient_%s" % (i,)
+    #     self.cleaned_data["ingredients"] = ingredients
 
     # def clean_ingredients(self):
     #     data = self.cleaned_data["ingredients"]
@@ -94,5 +141,5 @@ class RecipeForm(forms.ModelForm):
 
     def get_ingredients_fields(self):
         for field_name in self.fields:
-            if "Ingredient_" in field_name:
+            if "ingredient_" in field_name:
                 yield self[field_name]

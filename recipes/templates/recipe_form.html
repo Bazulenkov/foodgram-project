@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{% if form.instance %}Редактирование{% else %}Создание{%endif%} рецепта{% endblock %}
+{% block title %}{% if recipe %}Редактирование{% else %}Создание{%endif%} рецепта{% endblock %}
 {% load static %}
 {% block css %}{% static 'pages/form.css' %}{% endblock %}
 
@@ -9,7 +9,7 @@
 
     <main class="main container">
         <div class="main__header">
-            <h1 class="main__title">{% if form.instance %}Редактирование{% else %}Создание{%endif%} рецепта</h1>
+            <h1 class="main__title">{% if recipe %}Редактирование{% else %}Создание{%endif%} рецепта</h1>
         </div>
         <div class="form-container">
             <form class="form" method="post" enctype="multipart/form-data" action="{% url 'new_recipe' %}">
@@ -84,10 +84,10 @@
                         </div>
                         <div class="form__field-group-ingredientes-container">
                             {% for ingredient_field in form.get_ingredients_fields %}
-                            <div class="form__field-item-ingredient" id="ing_{{ ingredient_field.name[-1] }}"><span> цесарка тушка 2г</span> <span class="form__field-item-delete"></span>
-                                <input id="nameIngredient_1" name="nameIngredient_1" type="hidden" value="цесарка тушка">
+                            <div class="form__field-item-ingredient" id="ing_{{ ingredient_field.name }}"><span> {{ ingredient_field.subwidgets }}цесарка тушка 2г</span> <span class="form__field-item-delete"></span>
+                                <!-- <input id="nameIngredient_1" name="nameIngredient_1" type="hidden" value="цесарка тушка">
                                 <input id="valueIngredient_1" name="valueIngredient_1" type="hidden" value="2">
-                                <input id="unitsIngredient_1" name="unitsIngredient_1" type="hidden" value="г">
+                                <input id="unitsIngredient_1" name="unitsIngredient_1" type="hidden" value="г"> -->
                                 {{ ingredient_field }}
                             </div>
                             {% endfor %}
