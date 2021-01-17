@@ -36,7 +36,7 @@ class IngredientMultiField(forms.MultiValueField):
 
     def compress(self, data_list):
         if data_list:
-            return ":::",join(data_list)
+            return data_list
         return ""
 
 class RecipeForm(forms.ModelForm):
@@ -62,6 +62,20 @@ class RecipeForm(forms.ModelForm):
         # field_classes = {"tag": MultipleChoiceField}
         # widgets = {"tag": CheckboxSelectMultiple}
 
+    def get_ingredients(self, data):  # можно убрать параметр data и дергать из self.request.POST
+        result = []
+        for key, value in data.items():
+            if "nameIngredient" in key:
+                nameIngredient = value
+            elif "valueIngredient" in key:
+                valueIngredient = value
+            elif "unitsIngredient" in key:
+                ingredient = Ingredient.objects.filter(
+                    title=nameIngredient, dimension=value
+                ).first()
+                result.append([ingredient, valueIngredient])
+        return result
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         ingredients = RecipeIngredient.objects.filter(recipe=self.instance)
@@ -69,6 +83,14 @@ class RecipeForm(forms.ModelForm):
             field_name = "ingredient_%s" % (i,)
             self.fields[field_name] = IngredientMultiField(required=False, modelingredient=ingredients[i], initial=ingredients[i])
             self.fields[field_name].widget.attrs.update({"hidden": True})
+        
+        # if self.data:
+        for ing in self.get_ingredients(self.data):
+            i += 1
+            field_name = "ingredient_%s" % (i,)
+            self.fields[field_name] = IngredientMultiField(required=False)  # здесь надо дописать правильное значение в initial    
+            self.fields[field_name].widget.attrs.update({"hidden": True})
+            self.initial[field_name] = ing
             # self.initial[]
 
             # field_nameIngredient = "nameIngredient_%s" % (i,)
