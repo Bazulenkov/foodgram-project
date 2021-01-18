@@ -18,7 +18,7 @@ class IngredientMultiWidget(forms.MultiWidget):
 
     def decompress(self, value):
         if value:
-            return [value.ingredient.title, value.amount, value.ingredient.dimension]
+            return value
         return ["Nothing", "Nothing", "Nothing"]
 
 
@@ -37,7 +37,7 @@ class IngredientMultiField(forms.MultiValueField):
     def compress(self, data_list):
         if data_list:
             return data_list
-        return ""
+        return "No_data"
 
 class RecipeForm(forms.ModelForm):
     """ Форма модели Recipe, добавляем через нее новый рецепт и редактируем имеющющийся рецепт """
@@ -81,16 +81,18 @@ class RecipeForm(forms.ModelForm):
         ingredients = RecipeIngredient.objects.filter(recipe=self.instance)
         for i in range(len(ingredients)):
             field_name = "ingredient_%s" % (i,)
-            self.fields[field_name] = IngredientMultiField(required=False, modelingredient=ingredients[i], initial=ingredients[i])
+            initial = [ingredients[i].ingredient.title, ingredients[i].amount, ingredients[i].ingredient.dimension]
+            self.fields[field_name] = IngredientMultiField(required=False, modelingredient=ingredients[i], initial=initial)
             self.fields[field_name].widget.attrs.update({"hidden": True})
         
         # if self.data:
         for ing in self.get_ingredients(self.data):
             i += 1
             field_name = "ingredient_%s" % (i,)
-            self.fields[field_name] = IngredientMultiField(required=False)  # здесь надо дописать правильное значение в initial    
+            initial = [ing[0].title, ing[1], ing[0].dimension]
+            self.fields[field_name] = IngredientMultiField(required=False, initial=initial)  # здесь надо дописать правильное значение в initial    
             self.fields[field_name].widget.attrs.update({"hidden": True})
-            self.initial[field_name] = ing
+        pass
             # self.initial[]
 
             # field_nameIngredient = "nameIngredient_%s" % (i,)
@@ -130,7 +132,8 @@ class RecipeForm(forms.ModelForm):
     #     super().__init__(data=data, *args, **kwargs)
     # self.fields["duration"].widget.attrs.update({"class": "form__input"})
 
-    # def clean(self):
+    def clean(self):
+        print("clean")
     #     ingredients = set()
     #     i = 0
     #     field_name = "ingredient_%s" % (i,)
@@ -143,12 +146,14 @@ class RecipeForm(forms.ModelForm):
     #         i += 1
     #         field_name = "ingredient_%s" % (i,)
     #     self.cleaned_data["ingredients"] = ingredients
+        super().clean()
 
     # def clean_ingredients(self):
     #     data = self.cleaned_data["ingredients"]
     #     return data
 
-    # def save(self):
+    def save(self):
+        print("form.save")
     #     recipe = self.instance
     #     recipe.author = self.cleaned_data("author")
     #     recipe.title = self.cleaned_data("title")
@@ -160,6 +165,11 @@ class RecipeForm(forms.ModelForm):
     #     recipe.ingredients_set.all().delete()
     #     for ingredient in self.cleaned_data["ingredients"]:
     #         RecipeIngredient.objects.create(recipe=recipe, ingredient=ingredient[0], amount=ingredient[1])
+        super().save()
+
+    def is_valid(self):
+        print("form.is_valid()")
+        return super().is_valid()
 
     def get_ingredients_fields(self):
         for field_name in self.fields:
