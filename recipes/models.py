@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
+
 def slugify(s):
     """
     Overriding django slugify that allows to use russian words as well.
@@ -16,8 +17,8 @@ def slugify(s):
             'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 
             'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ы': 'i', 'э': 'e', 'ю': 'yu',
             'я': 'ya'}
-            
-    return django_slugify(''.join(alphabet.get(w, w) for w in s.lower()))
+
+    return django_slugify("".join(alphabet.get(w, w) for w in s.lower()))
 
 
 class Ingredient(models.Model):
@@ -41,23 +42,18 @@ class Tag(models.Model):
 class Recipe(models.Model):
     """Модель рецепта"""
 
-    # TAG_CHOICES = [
-    #     ('breakfast', 'Breakfast'),
-    #     ('lunch', 'Lunch'),
-    #     ('dinner', 'Dinner')
-    # ]
-
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="recipes"
     )
     title = models.CharField(verbose_name="Название рецепта", max_length=50)
-    tag = models.ManyToManyField(Tag, blank=True, related_name="recipes")
-    # tag = models.CharField(max_length=100, choices=TAG_CHOICES)  # https://docs.djangoproject.com/en/3.1/ref/models/fields/#enumeration-types
+    tags = models.ManyToManyField(Tag, blank=True, related_name="recipes")
     ingredients = models.ManyToManyField(
-        Ingredient, through="RecipeIngredient", related_name="recipes"
+        Ingredient, through="RecipeIngredient"
     )
     description = models.TextField(verbose_name="Описание")
-    duration = models.PositiveSmallIntegerField(verbose_name="Время приготовления")
+    duration = models.PositiveSmallIntegerField(
+        verbose_name="Время приготовления", default=0
+    )
     image = models.ImageField(upload_to="recipes/")
     pub_date = models.DateTimeField("date published", auto_now_add=True)
     slug = models.SlugField(unique=True)
@@ -76,7 +72,7 @@ class Recipe(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse("reсipe_view", kwargs={"slug": self.slug})
+        return reverse("recipe_view", kwargs={"slug": self.slug})
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -89,7 +85,6 @@ class RecipeIngredient(models.Model):
     """
     Модель, связывающая рецепт и ингредиент, \
      в этой таблице будет хранится кол-во ингредиента в рецепте.
-    https://docs.djangoproject.com/en/3.1/topics/db/models/#extra-fields-on-many-to-many-relationships
     """
 
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
@@ -99,6 +94,9 @@ class RecipeIngredient(models.Model):
     class Meta:
         # в одном рецепте не может один ингредиент встречаться несколько раз
         unique_together = ["recipe", "ingredient"]
+
+    def __str__(self):
+        return f"{self.ingredient.title} - {self.amount} ({self.ingredient.dimension})"
 
 
 class Follow(models.Model):

@@ -74,45 +74,9 @@ class RecipeCreate(LoginRequiredMixin, CreateView):
     # model = Recipe
     form_class = RecipeForm
     template_name = "recipe_form.html"
-    # fields = ["title", "tag", "ingredients",  "duration", "description", "image"]
-
-    def get_ingredients(self, data):  # можно убрать параметр data и дергать из self.request.POST
-        result = []
-        for key, value in data.items():
-            if "nameIngredient" in key:
-                nameIngredient = value
-            elif "valueIngredient" in key:
-                valueIngredient = value
-            elif "unitsIngredient" in key:
-                ingredient = Ingredient.objects.filter(
-                    title=nameIngredient, dimension=value
-                ).first()
-                result.append([ingredient, valueIngredient])
-        return result
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        # здесь надо создать 
-        self.object = form.save()
-
-        # recipeingredients = set()
-        # и потом создать записи в таблице RecipeIngredient
-
-        
-        # TODO переписать это в save() - чтобы 2 раза не делать form.save()
-        #  потом можно сделать через bulk_create() https://docs.djangoproject.com/en/3.0/ref/models/querysets/#bulk-create
-        for ingredient in self.get_ingredients(self.request.POST):
-            obj, created = RecipeIngredient.objects.get_or_create(recipe=self.object, ingredient=ingredient[0], amount=ingredient[1])
-            if not created:
-                form.add_error("Duplicate in ingrdients")
-            # или recipe.ingredients.add(ingredient=ingredient[0], through_defaults={"amount": ingredient[1]})  # https://docs.djangoproject.com/en/3.1/topics/db/models/#extra-fields-on-many-to-many-relationships
-            # else:
-            #     recipeingredients.add(obj)
-
-        # recipeingredients = RecipeIngredients.objects.filter(recipe=recipe)
-        # и потом 
-        # form.instance.ingredients_set.add(recipeingredients)
-
         return super().form_valid(form)
 
 class RecipeView(DetailView):
