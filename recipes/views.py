@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.http import request
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -12,27 +12,28 @@ from .forms import RecipeForm
 from .models import Recipe, Ingredient, RecipeIngredient
 
 
-def index(request):
-    """Обрабатывает главную страницу"""
-    recipe_list = (
-        Recipe.objects.select_related("author").order_by("-pub_date").all()
-    )
-    # показывать по 6 записей на странице.
-    paginator = Paginator(recipe_list, 6)
-    # переменная в URL с номером запрошенной страницы
-    page_number = request.GET.get("page")
-    # получить записи с нужным смещением
-    page = paginator.get_page(page_number)
-    return render(
-        request, "index.html", {"page": page, "paginator": paginator}
-    )
+# def index(request):
+#     """Обрабатывает главную страницу"""
+#     recipe_list = (
+#         Recipe.objects.select_related("author").order_by("-pub_date").all()
+#     )
+#     # показывать по 6 записей на странице.
+#     paginator = Paginator(recipe_list, 6)
+#     # переменная в URL с номером запрошенной страницы
+#     page_number = request.GET.get("page")
+#     # получить записи с нужным смещением
+#     page = paginator.get_page(page_number)
+#     return render(
+#         request, "index.html", {"page": page, "paginator": paginator}
+#     )
 
 
 class RecipeListView(ListView):
     """Выводит список всех рецептов на главную страницу"""
 
     template_name = "index.html"
-    queryset = Recipe.objects.all()
+    model = Recipe
+    # queryset = Recipe.objects.all()
     context_object_name = "recipe_list"
     paginate_by = 6
 
@@ -79,6 +80,7 @@ class RecipeCreate(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
+
 class RecipeView(DetailView):
     model = (
         Recipe  # https://docs.djangoproject.com/en/3.1/ref/class-based-views/
@@ -86,11 +88,17 @@ class RecipeView(DetailView):
     template_name = "recipe_detail.html"
 
 
-class RecipeUpdate(UpdateView):
+class RecipeUpdate(LoginRequiredMixin, UpdateView):
     form_class = RecipeForm
     model = Recipe
     template_name = "recipe_form.html"
     # fields = ["title", "image", "text", "ingredients", "tag", "duration"]
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if request.user != self.object.author:
+            return redirect(self.object.get_absolute_url())
+        return super().get(request, *args, **kwargs)
 
 
 class RecipeDelete(DeleteView):

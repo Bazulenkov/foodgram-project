@@ -9,6 +9,7 @@ class RecipeForm(forms.ModelForm):
     tags = forms.ModelMultipleChoiceField(
         queryset=Tag.objects.all(),
         to_field_name="slug",
+        required=False,
         # widget=CheckboxSelectMultiple,
     )
     ingredients = forms.ModelMultipleChoiceField(
@@ -43,8 +44,6 @@ class RecipeForm(forms.ModelForm):
     def save(self, commit=True):
         recipe_obj = super().save(commit=False)
         recipe_obj.save()
-
-        #TODO попробовать сразу recipe_obj = super().save
 
         ingredients_amount = self.amount
         recipe_obj.recipeingredient_set.all().delete()

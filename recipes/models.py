@@ -52,7 +52,7 @@ class Recipe(models.Model):
     )
     description = models.TextField(verbose_name="Описание")
     duration = models.PositiveSmallIntegerField(
-        verbose_name="Время приготовления", default=0
+        verbose_name="Время приготовления"
     )
     image = models.ImageField(upload_to="recipes/")
     pub_date = models.DateTimeField("date published", auto_now_add=True)

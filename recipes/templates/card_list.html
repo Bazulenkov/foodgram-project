@@ -1,19 +1,9 @@
         <!-- Вывод карточек рецептов -->
 <div class="card-list">
 
-    {% comment %}
-
-    {% for recipe in recipes %}
+    {% for recipe in recipe_list %}
     {% include "card_on_list.html" with recipe=recipe %}
     {% endfor %}
-
-    {% endcomment %}
-
-    {% include "card_on_list.html" with recipe=recipe %}
-    {% include "card_on_list.html" with recipe=recipe %}
-    {% include "card_on_list.html" with recipe=recipe %}
-    {% include "card_on_list.html" with recipe=recipe %}
-    {% include "card_on_list.html" with recipe=recipe %}
 
 </div>
 
