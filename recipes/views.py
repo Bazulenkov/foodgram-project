@@ -9,7 +9,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 from .forms import RecipeForm
-from .models import Recipe, Ingredient, RecipeIngredient
+from .models import Recipe, Ingredient, RecipeIngredient, Tag, User
 
 
 # def index(request):
@@ -33,10 +33,32 @@ class RecipeListView(ListView):
 
     template_name = "index.html"
     model = Recipe
-    # queryset = Recipe.objects.all()
     context_object_name = "recipe_list"
     paginate_by = 6
 
+    def get_queryset(self):  # -> QuerySet:
+        tags = self.request.GET.get("tags")
+        if tags:
+            tags = tags.split(",")
+            self.queryset = self.model._default_manager.filter(
+                tags__slug__in=tags
+            )
+
+        return super().get_queryset()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context["all_tags"] = Tag.objects.all()
+        return context
+
+
+class AuthorDetail(DetailView):
+    """Отображает профиль автора рецептов/пользователя."""
+
+    model = User
+    template_name = "authorRecipe.html"
+    
 
 @login_required
 def subscriptions(request):
