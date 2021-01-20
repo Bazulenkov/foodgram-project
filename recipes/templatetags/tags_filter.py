@@ -14,8 +14,9 @@ def get_filter_values(get_params):
 @register.filter
 def get_filter_link(request, tag):
     tags = request.GET.get("tags")
-    if tag.slug in tags:
+    result : str = tags
+    if tags and tag.slug in tags:
         tags = tags.split(",")
 
-        # result = 
+        result = 
     return tag.slug
