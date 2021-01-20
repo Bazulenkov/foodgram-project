@@ -46,7 +46,7 @@ class Recipe(models.Model):
         User, on_delete=models.CASCADE, related_name="recipes"
     )
     title = models.CharField(verbose_name="Название рецепта", max_length=50)
-    tags = models.ManyToManyField(Tag, blank=True, related_name="recipes")
+    tags = models.ManyToManyField(Tag, related_name="recipes")
     ingredients = models.ManyToManyField(
         Ingredient, through="RecipeIngredient"
     )
