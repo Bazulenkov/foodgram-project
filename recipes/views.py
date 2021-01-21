@@ -42,16 +42,15 @@ class RecipeListView(ListView):
         super().__init__(**kwargs)
 
     def get_queryset(self):  # -> QuerySet:
-        queryself = super().get_queryset()
+        queryset = super().get_queryset()
 
         tags = self.request.GET.getlist("tags")
         all_tags = [tag.slug for tag in self.all_tags]
         tags = list(set(all_tags) - set(tags))
         if tags:
-            self.queryset = queryself.filter(tags__slug__in=tags).distinct()
+            queryset = queryset.filter(tags__slug__in=tags).distinct()
 
-        return queryself
-
+        return queryset
     # def get_context_data(self, **kwargs):
     #     context = super().get_context_data(**kwargs)
     #     # Add in a QuerySet of all the books
