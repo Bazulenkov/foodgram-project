@@ -1,4 +1,5 @@
 from django import template
+from django.http import request
 
 # В template.Library зарегистрированы все теги и фильтры шаблонов
 # добавляем к ним и наш фильтр
@@ -7,16 +8,25 @@ register = template.Library()
 
 @register.filter
 def get_filter_values(get_params):
-    if "tags" in get_params:
-        return get_params.get("tags")
+    return get_params.getlist("tags")
 
 
 @register.filter
-def get_filter_link(request, tag):
-    tags = request.GET.get("tags")
-    result : str = tags
-    if tags and tag.slug in tags:
-        tags = tags.split(",")
+def get_filter_link(get_params, tag):
+    get_params = get_params.copy()
+    tags: list = get_params.getlist("tags")
+    if tag.slug in tags:
+        tags.remove(tag.slug)
+        get_params.setlist("tags", tags)
+    else:
+        get_params.update({"tags": tag.slug})
 
-        result = 
-    return tag.slug
+    return get_params.urlencode()
+
+@register.filter
+def get_tags(get_params):
+    result = "tags="
+    tags = get_params.getlist("tags")
+    for tag in tags:
+        result += "&tags=".join(tags)
+    return result

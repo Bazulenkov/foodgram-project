@@ -9,7 +9,6 @@ class RecipeForm(forms.ModelForm):
     tags = forms.ModelMultipleChoiceField(
         queryset=Tag.objects.all(),
         to_field_name="slug",
-        required=False,
         # widget=CheckboxSelectMultiple,
     )
     ingredients = forms.ModelMultipleChoiceField(

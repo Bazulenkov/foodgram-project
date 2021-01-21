@@ -36,21 +36,31 @@ class RecipeListView(ListView):
     context_object_name = "recipe_list"
     paginate_by = 6
 
+    def __init__(self, **kwargs) -> None:
+        self.all_tags = Tag.objects.all()
+        super().__init__(**kwargs)
+
     def get_queryset(self):  # -> QuerySet:
-        tags = self.request.GET.get("tags")
+        tags = self.request.GET.getlist("tags")
+        all_tags = [tag.slug for tag in self.all_tags]
+        tags = list(set(all_tags) - set(tags))
         if tags:
-            tags = tags.split(",")
             self.queryset = self.model._default_manager.filter(
                 tags__slug__in=tags
-            )
+            ).distinct()
 
         return super().get_queryset()
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
-        context["all_tags"] = Tag.objects.all()
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     # Add in a QuerySet of all the books
+    #     context["all_tags"] = Tag.objects.all()
+    #     return context
+
+
+class AuthorListView(RecipeListView):
+    """Выводит список всех рецептов одного автора"""
+
 
 
 class AuthorDetail(DetailView):
@@ -58,7 +68,7 @@ class AuthorDetail(DetailView):
 
     model = User
     template_name = "authorRecipe.html"
-    
+
 
 @login_required
 def subscriptions(request):
