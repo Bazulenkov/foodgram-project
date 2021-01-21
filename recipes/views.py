@@ -1,32 +1,26 @@
-from django.contrib import auth
+import json
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
-from django.http import request
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
+
 from .forms import RecipeForm
-from .models import Recipe, Ingredient, RecipeIngredient, Tag, User
-
-
-# def index(request):
-#     """Обрабатывает главную страницу"""
-#     recipe_list = (
-#         Recipe.objects.select_related("author").order_by("-pub_date").all()
-#     )
-#     # показывать по 6 записей на странице.
-#     paginator = Paginator(recipe_list, 6)
-#     # переменная в URL с номером запрошенной страницы
-#     page_number = request.GET.get("page")
-#     # получить записи с нужным смещением
-#     page = paginator.get_page(page_number)
-#     return render(
-#         request, "index.html", {"page": page, "paginator": paginator}
-#     )
+from .models import (
+    Follow,
+    Favorite,
+    Recipe,
+    Ingredient,
+    RecipeIngredient,
+    Tag,
+    User,
+)
 
 
 class RecipeListView(ListView):
@@ -51,6 +45,7 @@ class RecipeListView(ListView):
             queryset = queryset.filter(tags__slug__in=tags).distinct()
 
         return queryset
+
     # def get_context_data(self, **kwargs):
     #     context = super().get_context_data(**kwargs)
     #     # Add in a QuerySet of all the books
@@ -67,6 +62,34 @@ class AuthorListView(RecipeListView):
         )
         self.queryset = self.model._default_manager.filter(author=self.author)
         return super().get_queryset()
+
+
+class Favorites(LoginRequiredMixin, RecipeListView):
+    """Функция добавления/удаления рецепта в "Избранное"."""
+
+    # def get(self, request):
+    #     pass
+
+    def post(self, request):
+        req_ = json.loads(request.body)
+        recipe_id = req_.get("id", None)
+        if recipe_id is not None:
+            recipe = get_object_or_404(Recipe, id=recipe_id)
+            obj, created = Favorite.objects.get_or_create(
+                user=request.user, recipe=recipe
+            )
+
+            if created:
+                return JsonResponse({"success": True})
+            return JsonResponse({"success": False})
+        return JsonResponse({"success": False}, status=400)
+
+    def delete(self, request, recipe_id):
+        recipe = get_object_or_404(
+            Favorite, user=request.user, recipe=recipe_id
+        )
+        recipe.delete()
+        return JsonResponse({"success": True})
 
 
 @login_required
