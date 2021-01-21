@@ -7,6 +7,12 @@
             <h1 class="main__title">{% if view.author %}{{ view.author }}{% else %}Рецепты{% endif %}</h1>
             {% include "tags.html" %}
         </div>
+        {% if view.author %}
+        <div class="author-subscribe" data-author="{{ view.author.id }}">
+            <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p>
+        </div>
+        {% endif %}
+
         {% include 'card_list.html' %}
     </main>
 {% endblock content %}
@@ -18,5 +24,10 @@
         <script src="{% static 'indexAuth.js' %}"></script>
     {% else %}
         <script src="{% static 'indexNotAuth.js' %}"></script>
+    {% endif %}
+
+    {% if view.author %}
+        <script src="{% static 'authorRecipe.js' %}"></script>
+        <script src="{% static 'js/components/AuthorRecipe.js' %}"></script>
     {% endif %}
 {% endblock js-scripts %}
