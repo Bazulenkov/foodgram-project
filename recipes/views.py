@@ -1,8 +1,9 @@
+from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.http import request
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -41,15 +42,15 @@ class RecipeListView(ListView):
         super().__init__(**kwargs)
 
     def get_queryset(self):  # -> QuerySet:
+        queryself = super().get_queryset()
+
         tags = self.request.GET.getlist("tags")
         all_tags = [tag.slug for tag in self.all_tags]
         tags = list(set(all_tags) - set(tags))
         if tags:
-            self.queryset = self.model._default_manager.filter(
-                tags__slug__in=tags
-            ).distinct()
+            self.queryset = queryself.filter(tags__slug__in=tags).distinct()
 
-        return super().get_queryset()
+        return queryself
 
     # def get_context_data(self, **kwargs):
     #     context = super().get_context_data(**kwargs)
@@ -61,13 +62,12 @@ class RecipeListView(ListView):
 class AuthorListView(RecipeListView):
     """Выводит список всех рецептов одного автора"""
 
-
-
-class AuthorDetail(DetailView):
-    """Отображает профиль автора рецептов/пользователя."""
-
-    model = User
-    template_name = "authorRecipe.html"
+    def get_queryset(self):
+        self.author = get_object_or_404(
+            User, username=self.kwargs.get("username")
+        )
+        self.queryset = self.model._default_manager.filter(author=self.author)
+        return super().get_queryset()
 
 
 @login_required
