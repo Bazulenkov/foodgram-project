@@ -16,10 +16,9 @@ from .models import (
     Follow,
     Favorite,
     Recipe,
-    Ingredient,
-    RecipeIngredient,
     Tag,
     User,
+    ShopList
 )
 
 
@@ -63,10 +62,8 @@ class FollowList(LoginRequiredMixin, ListView):
 
     template_name = "follow.html"
     paginate_by = 3
-    # model = User
 
     def get_queryset(self):  # -> QuerySet:
-        # queryset = super().get_queryset()
         queryset = User.objects.filter(following__user=self.request.user)
         return queryset
 
@@ -87,17 +84,13 @@ class FollowList(LoginRequiredMixin, ListView):
 
     def delete(self, request, author_id):
         """ Обрабатывает POST-запрос от JS при нажатии на кнопку "Отписаться" """
-        author = get_object_or_404(
-            Follow, user=request.user, author=author_id
-        )
+        author = get_object_or_404(Follow, user=request.user, author=author_id)
         author.delete()
         return JsonResponse({"success": True})
 
 
 class Favorites(LoginRequiredMixin, RecipeListView):
     """Добавляет/удаляет рецепта в "Избранное" + отображение."""
-
-    # extra_context = {"favorites": True}
 
     def get_queryset(self):
         self.queryset = self.model._default_manager.filter(
@@ -129,6 +122,41 @@ class Favorites(LoginRequiredMixin, RecipeListView):
         """ Обрабатывает POST-запрос от JS при отжатии "звездочки" """
         recipe = get_object_or_404(
             Favorite, user=request.user, recipe=recipe_id
+        )
+        recipe.delete()
+        return JsonResponse({"success": True})
+
+
+class ShopListView(ListView):
+    """Добавляет/удаляет рецепты в список покупок + отображение."""
+
+    template_name = "shop_list.html"
+    model = Recipe
+    context_object_name = "recipe_list"
+
+    def get_queryset(self):  # -> QuerySet:
+        queryset = Recipe.objects.filter(purchases__user=self.request.user)
+        return queryset
+
+    def post(self, request):
+        """ Обрабатывает POST-запрос от JS. Добавляет рецепт в список покупок """
+        req_ = json.loads(request.body)
+        recipe_id = req_.get("id", None)
+        if recipe_id is not None:
+            recipe = get_object_or_404(Recipe, id=recipe_id)
+            obj, created = ShopList.objects.get_or_create(
+                user=request.user, recipe=recipe
+            )
+
+            if created:
+                return JsonResponse({"success": True})
+            return JsonResponse({"success": False})
+        return JsonResponse({"success": False}, status=400)
+
+    def delete(self, request, recipe_id):
+        """ Обрабатывает POST-запрос от JS. Удаляет рецепт из спика покупок """
+        recipe = get_object_or_404(
+            ShopList, user=request.user, recipe=recipe_id
         )
         recipe.delete()
         return JsonResponse({"success": True})

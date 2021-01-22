@@ -59,12 +59,6 @@ class Recipe(models.Model):
     slug = models.SlugField(unique=True)
 
     class Meta:
-        # в одном рецепте не может один ингредиент встречаться несколько раз
-        # constraints = [
-        #     models.UniqueConstraint(
-        #         fields=["ingredients"], name="unique_ingredient"
-        #     )
-        # ]
 
         ordering = ["-pub_date"]
 
@@ -102,16 +96,10 @@ class RecipeIngredient(models.Model):
 class Follow(models.Model):
     """Модель подписки на авторов"""
 
-    # можно попробовать переопределить модель User и туда вставить
-    # follower = models.ManyToManyField("self", symmetrical=False)
-    # https://docs.djangoproject.com/en/3.1/ref/models/fields/#django.db.models.ManyToManyField.symmetrical
-
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="follower"
     )
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="following"
-    )
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ["user", "author"]
@@ -123,11 +111,26 @@ class Follow(models.Model):
 class Favorite(models.Model):
     """Модель избранных рецептов"""
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorites")
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="favorites")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="favorites"
+    )
+    recipe = models.ForeignKey(
+        Recipe, on_delete=models.CASCADE, related_name="favorites"
+    )
 
     class Meta:
         unique_together = ["user", "recipe"]
 
     def __str__(self):
         return f"{self.user}-{self.recipe}"
+
+
+class ShopList(models.Model):
+    """Модель списка покупок"""
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="purchases"
+    )
+    recipe = models.ForeignKey(
+        Recipe, on_delete=models.CASCADE, related_name="purchases"
+    )
