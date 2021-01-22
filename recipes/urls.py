@@ -8,8 +8,8 @@ urlpatterns = [
     path("purchases/", views.purchases, name="purchases"),  # список покупок
     # path("purchases/<int:recipe_id>/",),  # ? есть в js.api
 
-    path("subscriptions/", views.subscriptions, name="subscriptions"),  # страница подписок на авторов
-    # path("subscriptions/<int:author_id>/",),  # ? есть в js.api
+    path("subscriptions/", views.FollowList.as_view(), name="subscriptions"),  # страница подписок на авторов
+    path("subscriptions/<int:author_id>/", views.FollowList.as_view()),
 
     path("recipe/add/", views.RecipeCreate.as_view(), name="new_recipe"),
     path("recipe/<slug:slug>/update", views.RecipeUpdate.as_view(), name="recipe_update"),

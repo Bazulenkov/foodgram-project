@@ -15,7 +15,12 @@ def addclass(field, css):
 
 
 @register.filter
-def is_favorite(recipe_id, user_id):
-    user = get_object_or_404(User, id=user_id)
+def is_favorite(recipe_id, user):
+    # user = get_object_or_404(User, id=user_id)
     result = user.favorites.filter(recipe=recipe_id).exists()
+    return result
+
+@register.filter
+def has_follower(author_id, user):
+    result = user.follower.filter(author=author_id).exists()
     return result

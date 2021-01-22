@@ -58,8 +58,44 @@ class AuthorListView(RecipeListView):
         return super().get_queryset()
 
 
+class FollowList(LoginRequiredMixin, ListView):
+    """Добавляет/удаляет автора в подписки + отображение."""
+
+    template_name = "follow.html"
+    paginate_by = 3
+    # model = User
+
+    def get_queryset(self):  # -> QuerySet:
+        # queryset = super().get_queryset()
+        queryset = User.objects.filter(following__user=self.request.user)
+        return queryset
+
+    def post(self, request):
+        """ Обрабатывает POST-запрос от JS при нажатии на кнопку "Подписаться" """
+        req_ = json.loads(request.body)
+        author_id = req_.get("id", None)
+        if author_id is not None:
+            author = get_object_or_404(User, id=author_id)
+            obj, created = Follow.objects.get_or_create(
+                user=request.user, author=author
+            )
+
+            if created:
+                return JsonResponse({"success": True})
+            return JsonResponse({"success": False})
+        return JsonResponse({"success": False}, status=400)
+
+    def delete(self, request, author_id):
+        """ Обрабатывает POST-запрос от JS при нажатии на кнопку "Отписаться" """
+        author = get_object_or_404(
+            Follow, user=request.user, author=author_id
+        )
+        author.delete()
+        return JsonResponse({"success": True})
+
+
 class Favorites(LoginRequiredMixin, RecipeListView):
-    """Функция добавления/удаления рецепта в "Избранное" + отображение."""
+    """Добавляет/удаляет рецепта в "Избранное" + отображение."""
 
     # extra_context = {"favorites": True}
 
@@ -75,6 +111,7 @@ class Favorites(LoginRequiredMixin, RecipeListView):
         return context
 
     def post(self, request):
+        """ Обрабатывает POST-запрос от JS при нажатии на "звездочку" """
         req_ = json.loads(request.body)
         recipe_id = req_.get("id", None)
         if recipe_id is not None:
@@ -89,6 +126,7 @@ class Favorites(LoginRequiredMixin, RecipeListView):
         return JsonResponse({"success": False}, status=400)
 
     def delete(self, request, recipe_id):
+        """ Обрабатывает POST-запрос от JS при отжатии "звездочки" """
         recipe = get_object_or_404(
             Favorite, user=request.user, recipe=recipe_id
         )
