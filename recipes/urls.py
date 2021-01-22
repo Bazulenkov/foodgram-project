@@ -16,10 +16,10 @@ urlpatterns = [
     path("recipe/<slug:slug>/delete", views.RecipeDelete.as_view(), name="recipe_delete"),
     path("recipe/<slug:slug>", views.RecipeView.as_view(), name="recipe_view"),
 
-    path("<username>/", views.AuthorListView.as_view(), name="author"),  # страница пользователя (профайл)
-
     path("favorites/", views.Favorites.as_view(), name="favorites"),  # список избранных рецептов
     path("favorites/<int:recipe_id>/", views.Favorites.as_view()),
 
+    path("<username>/", views.AuthorListView.as_view(), name="author"),  # страница пользователя (профайл)
+    
     path("", views.RecipeListView.as_view(), name="index")  # главная страница (все рецепты по дате)
 ]

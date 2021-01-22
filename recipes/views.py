@@ -2,7 +2,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
-from django.http import JsonResponse
+from django.http import JsonResponse, request
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
@@ -46,12 +46,6 @@ class RecipeListView(ListView):
 
         return queryset
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     # Add in a QuerySet of all the books
-    #     context["all_tags"] = Tag.objects.all()
-    #     return context
-
 
 class AuthorListView(RecipeListView):
     """Выводит список всех рецептов одного автора"""
@@ -65,10 +59,20 @@ class AuthorListView(RecipeListView):
 
 
 class Favorites(LoginRequiredMixin, RecipeListView):
-    """Функция добавления/удаления рецепта в "Избранное"."""
+    """Функция добавления/удаления рецепта в "Избранное" + отображение."""
 
-    # def get(self, request):
-    #     pass
+    # extra_context = {"favorites": True}
+
+    def get_queryset(self):
+        self.queryset = self.model._default_manager.filter(
+            favorites__user=self.request.user
+        )
+        return super().get_queryset()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["favorites"] = True
+        return context
 
     def post(self, request):
         req_ = json.loads(request.body)
@@ -103,21 +107,6 @@ def subscriptions(request):
     page = paginator.get_page(page_number)
     return render(
         request, "myFollow.html", {"page": page, "paginator": paginator}
-    )
-
-
-@login_required
-def favorites(request):
-    """ Выводит список избранных рецептов """
-    # TODO переписать!!!!
-    recipe_list = Recipe.objects.filter(
-        author__following__user=request.user
-    ).order_by("-pub_date")
-    paginator = Paginator(recipe_list, 3)
-    page_number = request.GET.get("page")
-    page = paginator.get_page(page_number)
-    return render(
-        request, "favorite.html", {"page": page, "paginator": paginator}
     )
 
 
