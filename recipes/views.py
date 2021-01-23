@@ -132,7 +132,7 @@ class Favorites(LoginRequiredMixin, RecipeListView):
         return JsonResponse({"success": True})
 
 
-class ShopListView(ListView):
+class ShopListView(LoginRequiredMixin, ListView):
     """Добавляет/удаляет рецепты в список покупок + отображение."""
 
     template_name = "shop_list.html"
