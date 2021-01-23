@@ -139,9 +139,21 @@ class ShopListView(ListView):
     model = Recipe
     context_object_name = "recipe_list"
 
+    def __init__(self, **kwargs) -> None:
+        self.session = self.request.session
+        shoplist = self.session.get(settings.SHOPLIST_SESSION_ID)
+        if not shoplist:
+            # Сохраняем в сессии пустой список
+            shoplist = self.session[settings.SHOPLIST_SESSION_ID] = {}
+        self.shoplist = shoplist
+        super().__init__(**kwargs)
+
     def get_queryset(self):  # -> QuerySet:
         queryset = Recipe.objects.filter(purchases__user=self.request.user)
         return queryset
+
+    def save(self):
+        self.session.modified = True
 
     def post(self, request):
         """ Обрабатывает POST-запрос от JS. Добавляет рецепт в список покупок """

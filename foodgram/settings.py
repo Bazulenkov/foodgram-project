@@ -157,3 +157,5 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = "users.RecipeUser"
+
+SHOPLIST_SESSION_ID = 'shoplist'
