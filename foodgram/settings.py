@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "sorl.thumbnail",
-    "debug_toolbar",  # for django-debug-toolbar
+    # "debug_toolbar",  # for django-debug-toolbar
 ]
 
 MIDDLEWARE = [
@@ -52,13 +52,11 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",  # for django-debug-toolbar
+    # "debug_toolbar.middleware.DebugToolbarMiddleware",  # for django-debug-toolbar
 ]
 
 # for django-debug-toolbar
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
+# INTERNAL_IPS = ["127.0.0.1",]
 
 ROOT_URLCONF = "foodgram.urls"
 

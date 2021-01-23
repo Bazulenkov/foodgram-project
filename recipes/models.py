@@ -43,10 +43,15 @@ class Recipe(models.Model):
     """Модель рецепта"""
 
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="recipes"
+        User,
+        verbose_name="Автор",
+        on_delete=models.CASCADE,
+        related_name="recipes",
     )
     title = models.CharField(verbose_name="Название рецепта", max_length=50)
-    tags = models.ManyToManyField(Tag, related_name="recipes")
+    tags = models.ManyToManyField(
+        Tag, verbose_name="Тэги", related_name="recipes"
+    )
     ingredients = models.ManyToManyField(
         Ingredient, through="RecipeIngredient"
     )
@@ -99,7 +104,9 @@ class Follow(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="follower"
     )
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="following")
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="following"
+    )
 
     class Meta:
         unique_together = ["user", "author"]

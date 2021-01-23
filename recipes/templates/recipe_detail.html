@@ -19,7 +19,7 @@
                 {% csrf_token %}
                 <div class="single-card__header-info">
                     <h1 class="single-card__title">{{ recipe.title }}</h1>
-                    {% if user.is_authenticated %}
+                    {% if user.is_authenticated and user != recipe.author %}
                     <div class="single-card__favorite">
                         {% if recipe.id|is_favorite:user %}
                         <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_active icon-favorite_big"></span></button>
