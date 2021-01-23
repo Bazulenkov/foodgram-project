@@ -10,9 +10,15 @@ class RecipeIngredientsInline(admin.TabularInline):
 
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ("title", "author", "favorites_count")
+    readonly_fields = ("favorites_count",)
     list_filter = ("author", "title", "tags")
     prepopulated_fields = {"slug": ("title",)}
     inlines = (RecipeIngredientsInline,)
+    add_fieldsets = (
+        (None, {
+            'fields': ("favorites_count",),
+        }),
+    )
 
     def favorites_count(self, obj):
         return obj.favorites.count()
