@@ -1,20 +1,18 @@
 import json
+import weasyprint
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-from django.views import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 # from wkhtmltopdf.views import PDFTemplateView
-from django.conf import settings
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-import weasyprint
 
 
 from .forms import RecipeForm
@@ -232,9 +230,7 @@ class RecipeCreate(LoginRequiredMixin, CreateView):
 
 
 class RecipeView(DetailView):
-    model = (
-        Recipe  # https://docs.djangoproject.com/en/3.1/ref/class-based-views/
-    )
+    model = Recipe
     template_name = "recipe_detail.html"
 
 
@@ -242,7 +238,6 @@ class RecipeUpdate(LoginRequiredMixin, UpdateView):
     form_class = RecipeForm
     model = Recipe
     template_name = "recipe_form.html"
-    # fields = ["title", "image", "text", "ingredients", "tag", "duration"]
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
