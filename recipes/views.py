@@ -1,8 +1,8 @@
 import json
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import Paginator
-from django.http import JsonResponse, request
+from django.db.models import Sum
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
@@ -10,15 +10,22 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
+# from wkhtmltopdf.views import PDFTemplateView
+from django.conf import settings
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+import weasyprint
+
 
 from .forms import RecipeForm
 from .models import (
     Follow,
     Favorite,
     Recipe,
+    RecipeIngredient,
     Tag,
     User,
-    ShopList
+    ShopList,
 )
 
 
@@ -162,22 +169,56 @@ class ShopListView(ListView):
         return JsonResponse({"success": True})
 
 
+# class ShoppingListPDF(PDFTemplateView):
+#     # filename = "shoppinglist.pdf"
+#     template_name = "shoppinglist_pdf.html"
+#     # cmd_options = {
+#     #     "margin-top": 3,
+#     # }
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+
+#         recipe_list = Recipe.objects.filter(purchases__user=self.request.user)
+#         ingredient_list = (
+#             RecipeIngredient.objects.filter(recipe__purchases__user=self.request.user)
+#             .values("ingredient__title", "ingredient__dimension")
+#             .annotate(amountsum=Sum("amount"))
+#         )
+#         context["recipe_list"] = recipe_list
+#         context["ingredients"] = ingredient_list
+
+#         return context
+
+
 @login_required
-def subscriptions(request):
-    """ Выводит список записей авторов, которые есть в подписке """
-    recipe_list = Recipe.objects.filter(
-        author__following__user=request.user
-    ).order_by("-pub_date")
-    paginator = Paginator(recipe_list, 3)
-    page_number = request.GET.get("page")
-    page = paginator.get_page(page_number)
-    return render(
-        request, "myFollow.html", {"page": page, "paginator": paginator}
+def order_pdf(request):
+    """ Формирует pdf-файл со списком ингредиентов для покупки """
+    recipe_list = Recipe.objects.filter(purchases__user=request.user)
+    ingredient_list = (
+        RecipeIngredient.objects.filter(recipe__purchases__user=request.user)
+        .values("ingredient__title", "ingredient__dimension")
+        .annotate(amountsum=Sum("amount"))
     )
 
-
-def purchases(request):
-    return render(request, "shopList.html")
+    html = render_to_string(
+        "shoppinglist_pdf.html",
+        {"recipe_list": recipe_list, "ingredients": ingredient_list},
+    )
+    response = HttpResponse(content_type="application/pdf")
+    response[
+        "Content-Disposition"
+    ] = 'filename=\
+    "list_{}.pdf"'.format(
+        request.user.id
+    )
+    weasyprint.HTML(string=html).write_pdf(
+        response,
+        stylesheets=[
+            weasyprint.CSS(str(settings.STATIC_ROOT) + "/shoppinglist_pdf.css")
+        ],
+    )
+    return response
 
 
 class RecipeCreate(LoginRequiredMixin, CreateView):

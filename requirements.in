@@ -4,4 +4,6 @@ python-dotenv
 Pillow
 sorl-thumbnail
 djangorestframework
+WeasyPrint
+# django-wkhtmltopdf
 django-debug-toolbar

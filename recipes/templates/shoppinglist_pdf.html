@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"> {% load static %}
+    <link rel="stylesheet" href="{% static 'shoppinglist_pdf.css' %}">
+</head>
+
+<body>
+    <h1>Продуктовый помощник</h1>
+    <p> Мы составили для вас список продуктов по выбранным вами рецептам:</p>
+    <ol> {% for recipe in recipe_list %}
+        <li>{{ recipe.title }}</li> {% endfor %}
+    </ol>
+    <h3>Cписок продуктов:</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Название</th>
+                    <th>Количество</th>
+                </tr>
+            </thead>
+            <tbody> {% for ingredient in ingredients %}
+                <tr class="row{% cycle " 1 " " 2 " %}">
+                    <td>{{ forloop.counter }}. </td>
+                    <td>{{ ingredient.ingredient__title|capfirst }}</td>
+                    <td>{{ ingredient.amountsum }} {{ ingredient.ingredient__dimension }}.</td>
+                </tr> {% endfor %}
+                <tr> </tr>
+            </tbody>
+        </table>
+</body>
+
+</html>
