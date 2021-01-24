@@ -6,4 +6,5 @@ sorl-thumbnail
 djangorestframework
 WeasyPrint
 python-dotenv
+gunicorn
 # django-debug-toolbar

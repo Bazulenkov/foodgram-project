@@ -10,6 +10,8 @@ django==3.1.5
     #   djangorestframework
 djangorestframework==3.12.2
     # via -r requirements.in
+gunicorn==20.0.4
+    # via -r requirements.in
 pillow==8.1.0
     # via
     #   -r requirements.in
