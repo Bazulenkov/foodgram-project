@@ -5,4 +5,5 @@ Pillow
 sorl-thumbnail
 djangorestframework
 WeasyPrint
+python-dotenv
 # django-debug-toolbar
