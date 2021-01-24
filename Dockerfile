@@ -18,4 +18,4 @@ ENV PYTHONUNBUFFERED 1
 
 RUN python3 manage.py collectstatic --noinput
 
-CMD gunicorn api_yamdb.wsgi:application --bind 0.0.0.0:8000
+CMD gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000
