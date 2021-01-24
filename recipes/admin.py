@@ -15,9 +15,12 @@ class RecipeAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
     inlines = (RecipeIngredientsInline,)
     add_fieldsets = (
-        (None, {
-            'fields': ("favorites_count",),
-        }),
+        (
+            None,
+            {
+                "fields": ("favorites_count",),
+            },
+        ),
     )
 
     def favorites_count(self, obj):

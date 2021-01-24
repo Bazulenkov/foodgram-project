@@ -17,7 +17,9 @@ class Command(BaseCommand):
         for tag in TAGS:
             try:
                 tag, created = Tag.objects.get_or_create(
-                    title=TAGS[tag]['title'], slug=TAGS[tag]['slug'], color=TAGS[tag]['color']
+                    title=TAGS[tag]["title"],
+                    slug=TAGS[tag]["slug"],
+                    color=TAGS[tag]["color"],
                 )
                 if created:
                     tag.save()

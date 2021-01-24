@@ -131,3 +131,9 @@ dmypy.json
 .vscode
 /static
 /media
+
+# flake8 config
+tox.ini
+
+# изначальные данные для проекта
+sources

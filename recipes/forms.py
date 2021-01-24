@@ -9,7 +9,6 @@ class RecipeForm(forms.ModelForm):
     tags = forms.ModelMultipleChoiceField(
         queryset=Tag.objects.all(),
         to_field_name="slug",
-        # widget=CheckboxSelectMultiple,
     )
     ingredients = forms.ModelMultipleChoiceField(
         queryset=Ingredient.objects.all(), to_field_name="title"
@@ -27,8 +26,6 @@ class RecipeForm(forms.ModelForm):
             "image",
         )
         localized_fields = "__all__"
-        # field_classes = {"tag": MultipleChoiceField}
-        # widgets = {"tag": CheckboxSelectMultiple}
 
     def __init__(self, data=None, *args, **kwargs):
         if data is not None:

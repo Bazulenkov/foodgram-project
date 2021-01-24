@@ -5,5 +5,4 @@ Pillow
 sorl-thumbnail
 djangorestframework
 WeasyPrint
-# django-wkhtmltopdf
-django-debug-toolbar
+# django-debug-toolbar
