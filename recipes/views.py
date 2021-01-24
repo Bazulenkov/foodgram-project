@@ -1,20 +1,17 @@
 import json
 import weasyprint
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
-# from wkhtmltopdf.views import PDFTemplateView
-
-
+from shoplist.shoplist import ShopList
 from .forms import RecipeForm
 from .models import (
     Follow,
@@ -23,11 +20,19 @@ from .models import (
     RecipeIngredient,
     Tag,
     User,
-    ShopList,
 )
 
 
-class RecipeListView(ListView):
+class ShopListMixin:
+    """Добавляет в context shoplist"""
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        shoplist = ShopList(self.request)
+        context["shoplist"] = shoplist.shoplist
+        return context
+
+
+class RecipeListView(ShopListMixin, ListView):
     """Выводит список всех рецептов на главную страницу"""
 
     template_name = "index.html"
@@ -62,7 +67,7 @@ class AuthorListView(RecipeListView):
         return super().get_queryset()
 
 
-class FollowList(LoginRequiredMixin, ListView):
+class FollowList(ShopListMixin, LoginRequiredMixin, ListView):
     """Добавляет/удаляет автора в подписки + отображение."""
 
     template_name = "follow.html"
@@ -81,7 +86,6 @@ class FollowList(LoginRequiredMixin, ListView):
             obj, created = Follow.objects.get_or_create(
                 user=request.user, author=author
             )
-
             if created:
                 return JsonResponse({"success": True})
             return JsonResponse({"success": False})
@@ -132,81 +136,41 @@ class Favorites(LoginRequiredMixin, RecipeListView):
         return JsonResponse({"success": True})
 
 
-class ShopListView(ListView):
+class ShopListView(ShopListMixin, ListView):
     """Добавляет/удаляет рецепты в список покупок + отображение."""
 
     template_name = "shop_list.html"
     model = Recipe
     context_object_name = "recipe_list"
 
-    def __init__(self, **kwargs) -> None:
-        self.session = self.request.session
-        shoplist = self.session.get(settings.SHOPLIST_SESSION_ID)
-        if not shoplist:
-            # Сохраняем в сессии пустой список
-            shoplist = self.session[settings.SHOPLIST_SESSION_ID] = {}
-        self.shoplist = shoplist
-        super().__init__(**kwargs)
-
     def get_queryset(self):  # -> QuerySet:
-        queryset = Recipe.objects.filter(purchases__user=self.request.user)
+        shoplist = ShopList(self.request)
+        queryset = Recipe.objects.filter(id__in=shoplist.shoplist)
         return queryset
-
-    def save(self):
-        self.session.modified = True
 
     def post(self, request):
         """ Обрабатывает POST-запрос от JS. Добавляет рецепт в список покупок """
         req_ = json.loads(request.body)
+        shoplist = ShopList(request)
         recipe_id = req_.get("id", None)
         if recipe_id is not None:
-            recipe = get_object_or_404(Recipe, id=recipe_id)
-            obj, created = ShopList.objects.get_or_create(
-                user=request.user, recipe=recipe
-            )
-
-            if created:
-                return JsonResponse({"success": True})
-            return JsonResponse({"success": False})
+            shoplist.add(int(recipe_id))
+            return JsonResponse({"success": True})
         return JsonResponse({"success": False}, status=400)
 
     def delete(self, request, recipe_id):
         """ Обрабатывает POST-запрос от JS. Удаляет рецепт из спика покупок """
-        recipe = get_object_or_404(
-            ShopList, user=request.user, recipe=recipe_id
-        )
-        recipe.delete()
+        shoplist = ShopList(request)
+        shoplist.remove(int(recipe_id))
         return JsonResponse({"success": True})
 
 
-# class ShoppingListPDF(PDFTemplateView):
-#     # filename = "shoppinglist.pdf"
-#     template_name = "shoppinglist_pdf.html"
-#     # cmd_options = {
-#     #     "margin-top": 3,
-#     # }
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-
-#         recipe_list = Recipe.objects.filter(purchases__user=self.request.user)
-#         ingredient_list = (
-#             RecipeIngredient.objects.filter(recipe__purchases__user=self.request.user)
-#             .values("ingredient__title", "ingredient__dimension")
-#             .annotate(amountsum=Sum("amount"))
-#         )
-#         context["recipe_list"] = recipe_list
-#         context["ingredients"] = ingredient_list
-
-#         return context
-
-
-@login_required
 def order_pdf(request):
     """ Формирует pdf-файл со списком ингредиентов для покупки """
-    recipe_list = Recipe.objects.filter(purchases__user=request.user)
+    shoplist = ShopList(request)
+    recipe_list = Recipe.objects.filter(id__in=shoplist.shoplist)
     ingredient_list = (
-        RecipeIngredient.objects.filter(recipe__purchases__user=request.user)
+        RecipeIngredient.objects.filter(recipe__id__in=shoplist.shoplist)
         .values("ingredient__title", "ingredient__dimension")
         .annotate(amountsum=Sum("amount"))
     )
@@ -231,8 +195,9 @@ def order_pdf(request):
     return response
 
 
-class RecipeCreate(LoginRequiredMixin, CreateView):
-    # model = Recipe
+class RecipeCreate(ShopListMixin, LoginRequiredMixin, CreateView):
+    """Создание рецепта."""
+
     form_class = RecipeForm
     template_name = "recipe_form.html"
 
@@ -241,12 +206,16 @@ class RecipeCreate(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class RecipeView(DetailView):
+class RecipeView(ShopListMixin, DetailView):
+    """Отображение рецепта детально."""
+
     model = Recipe
     template_name = "recipe_detail.html"
 
 
-class RecipeUpdate(LoginRequiredMixin, UpdateView):
+class RecipeUpdate(ShopListMixin, LoginRequiredMixin, UpdateView):
+    """Редактирование рецепта."""
+
     form_class = RecipeForm
     model = Recipe
     template_name = "recipe_form.html"
@@ -258,7 +227,27 @@ class RecipeUpdate(LoginRequiredMixin, UpdateView):
         return super().get(request, *args, **kwargs)
 
 
-class RecipeDelete(DeleteView):
+class RecipeDelete(ShopListMixin, DeleteView):
+    """Удаление рецепта."""
+
     model = Recipe
     template_name = "recipe_congirm_delete.html"
     success_url = reverse_lazy("index")
+
+    def post(self, request, *args: str, **kwargs):
+        shoplist = ShopList(request)
+        recipe = get_object_or_404(Recipe, slug=kwargs["slug"])
+        recipe_id : int = recipe.id
+        if recipe_id in shoplist.shoplist:
+            shoplist.remove(recipe_id)
+        return super().post(request, *args, **kwargs)
+
+
+def page_not_found(request, exception):
+    # Переменная exception содержит отладочную информацию,
+    # выводить её в шаблон пользователской страницы 404 мы не станем
+    return render(request, "misc/404.html", {"path": request.path}, status=404)
+
+
+def server_error(request):
+    return render(request, "misc/500.html", status=500)

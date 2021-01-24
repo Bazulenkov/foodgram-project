@@ -8,8 +8,6 @@
     <title>{% block title %}{% endblock %} | Продуктовый помощник</title>
     {% load static %}
     <link rel="stylesheet" href="{% block css %}{% static 'pages/index.css' %}{% endblock %}">
-    <!-- FontAwesome CDN -->
-    <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous"> -->
 </head>
 <body class="body">
     {% load thumbnail %}
@@ -28,10 +26,3 @@
     
 </body>
 </html>
-    
-{% comment "Опциональный текст, комментарий к комментарию" %}
-    <p>Этот кусок шаблона временно отключен {{ create_date|date:"c" }}</p>
-        <p>Уходя, гасите свет.</p>
-{% endcomment %}
-
-{# Однострочный комментарий, пригодится для заметок **#} 

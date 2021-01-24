@@ -13,4 +13,4 @@ foodgram-project
 
 Создайте администратора сайта `./manage.py createsuperuser`  
 
-Чтобы запусить проект на локальной машине - `./manage.py runserver`
+Чтобы запустить проект на локальной машине - `./manage.py runserver`

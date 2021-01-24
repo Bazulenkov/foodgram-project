@@ -49,7 +49,7 @@
                     {% endif %}
                 </div>
                 <ul class="single-card__items">
-                    {% if recipe.id|in_purchases:user %}
+                    {% if recipe.id|in_purchases:request.session %}
                     
                     <li class="single-card__item"><button class="button button_style_light-blue button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span> Рецепт добавлен</button></li>
                     {% else %}

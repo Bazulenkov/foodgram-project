@@ -130,14 +130,3 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f"{self.user}-{self.recipe}"
-
-
-class ShopList(models.Model):
-    """Модель списка покупок"""
-
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="purchases"
-    )
-    recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name="purchases"
-    )

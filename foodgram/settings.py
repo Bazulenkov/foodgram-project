@@ -25,7 +25,7 @@ SECRET_KEY = "28^l2!fa5oau*+lz))a$%6oo^^f6w3yw+wi6v4a7z0bwk&*@kh"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "users",
     "recipes.apps.RecipesConfig",
     "api",
+    "shoplist",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -128,12 +129,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 
 STATIC_ROOT = BASE_DIR / "static"
 
 
-MEDIA_URL = "media/"
+MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # Login
@@ -151,11 +152,11 @@ EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
     ]
 }
 
 AUTH_USER_MODEL = "users.RecipeUser"
 
-SHOPLIST_SESSION_ID = 'shoplist'
+SHOPLIST_SESSION_ID = "shoplist"
