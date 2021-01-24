@@ -21,7 +21,6 @@
 - [Python](https://www.python.org/)
 - [Django](https://www.djangoproject.com/)
 - [Django REST framework](https://www.django-rest-framework.org/)
-- [DRF Simple JWT](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Docker](https://www.docker.com/)
 - [Gunicorn](https://gunicorn.org/)
@@ -30,8 +29,6 @@
 ## Authors
 
 * **Anton Bazulenkov** - *Initial work* - [Bazulenkov](https://github.com/Bazulenkov)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
 ## License
 
