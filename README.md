@@ -5,7 +5,6 @@
 На момент создания этого файла ресурс доступен по адресу: http://food-gram.cf (Но это не навсегда :) 
 ## Installing
 
-`./manage.py makemigrations`  
 `./manage.py migrate`  
 
 Импортируйте теги в базу - выполните команду `./manage.py load_tags`  
