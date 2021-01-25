@@ -2,11 +2,8 @@ from django.urls import path
 
 from . import views
 
-# app_name = "recipes"
-
 urlpatterns = [
     path("shoppinglist/", views.order_pdf, name="shoppinglist"),
-    
     path("purchases/", views.ShopListView.as_view(), name="purchases"),
     path("purchases/<int:recipe_id>/", views.ShopListView.as_view()),
     path("subscriptions/", views.FollowList.as_view(), name="subscriptions"),

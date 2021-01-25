@@ -1,8 +1,5 @@
 from django import template
-from django.http import request
 
-# В template.Library зарегистрированы все теги и фильтры шаблонов
-# добавляем к ним и наш фильтр
 register = template.Library()
 
 

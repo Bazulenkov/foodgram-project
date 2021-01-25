@@ -4,7 +4,10 @@ from .models import Ingredient, Recipe, RecipeIngredient, Tag
 
 
 class RecipeForm(forms.ModelForm):
-    """ Форма модели Recipe, добавляем через нее новый рецепт и редактируем имеющющийся рецепт """
+    """
+    Форма модели Recipe, добавляем через нее новый рецепт и редактируем
+    имеющющийся рецепт
+    """
 
     tags = forms.ModelMultipleChoiceField(
         queryset=Tag.objects.all(),
