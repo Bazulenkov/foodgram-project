@@ -1,10 +1,11 @@
 import json
+
 import weasyprint
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
-from django.http import JsonResponse, HttpResponse
-from django.shortcuts import redirect, get_object_or_404, render
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic.detail import DetailView
@@ -12,15 +13,9 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 from shoplist.shoplist import ShopList
+
 from .forms import RecipeForm
-from .models import (
-    Follow,
-    Favorite,
-    Recipe,
-    RecipeIngredient,
-    Tag,
-    User,
-)
+from .models import Favorite, Follow, Recipe, RecipeIngredient, Tag, User
 
 
 class ShopListMixin:

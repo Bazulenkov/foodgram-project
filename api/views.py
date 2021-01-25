@@ -1,7 +1,7 @@
-from api.serializers import IngredientSerializer
 from django.contrib.auth import get_user_model
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
+from api.serializers import IngredientSerializer
 from recipes.models import Ingredient
 
 User = get_user_model()

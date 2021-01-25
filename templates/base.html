@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="{% block css %}{% static 'pages/index.css' %}{% endblock %}">
 </head>
 <body class="body">
-    {% load thumbnail %}
     {% block content %}
         {% include "header.html" with index=True %}
 

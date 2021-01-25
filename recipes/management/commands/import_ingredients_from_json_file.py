@@ -1,8 +1,9 @@
 """
 Import json data from JSON file to Datababse
 """
-from django.core.management.base import BaseCommand
 import json
+
+from django.core.management.base import BaseCommand
 
 from recipes.models import Ingredient
 
