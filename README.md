@@ -1,4 +1,4 @@
-![workflow foodgram](https://github.com/Bazulenkov/foodgram-project/workflows/foodgam%20CI%2fCD/badge.svg)
+![workflow foodgram](https://github.com/Bazulenkov/foodgram-project/workflows/foodgram%20CI%2fCD/badge.svg)
 # foodgram-project
 Приложение «Продуктовый помощник»: сайт, на котором пользователи могут публиковать рецепты, добавлять чужие рецепты в избранное и подписываться на публикации других авторов. Сервис «Список покупок» позволит пользователям создавать список продуктов, которые нужно купить для приготовления выбранных блюд. 
 
