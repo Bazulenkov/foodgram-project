@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from django.views.generic.base import TemplateView
 
-# Create your views here.
+
+class AboutAuthorView(TemplateView):
+    template_name = "author.html"
+
+class AboutTechView(TemplateView):
+    template_name = "tech.html"

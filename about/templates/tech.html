@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Технологии{% endblock %}
+{% block content %}
+{% include "header.html" %}
+<main class="main container">
+    <div class="custom-center-block">
+        <div class="custom-text-block">
+            <p>При создании этого сайта использовались следующие технологии:</p>
+            <ul>
+                <li>[Python](https://www.python.org/)</li>
+                <li>[Django](https://www.djangoproject.com/)</li>
+                <li>[Django REST framework](https://www.django-rest-framework.org/)</li>
+                <li>[PostgreSQL](https://www.postgresql.org/)</li>
+                <li>[Docker](https://www.docker.com/)</li>
+                <li>[Gunicorn](https://gunicorn.org/)</li>
+                <li>[NGINX](https://nginx.org)</li>
+            </ul>
+        </div>
+        <div class="custom-button-block">
+            <a href="{% url 'index' %}">
+                <button class="button button_style_blue">Перейти на главную</button>
+            </a>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -26,8 +26,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "[::1]",
-    "food-gram.cf",
-    "www.food-gram.cf",
+    "178.154.226.220",
 ]
 
 
