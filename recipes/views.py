@@ -64,8 +64,7 @@ class FollowList(ShopListMixin, LoginRequiredMixin, ListView):
         return queryset
 
     def post(self, request):
-        """Обрабатывает POST-запрос от JS при нажатии на кнопку \
-            "Подписаться"."""
+        """Обрабатывает POST-запрос от JS при нажатии на кнопку"Подписаться"."""
         req_ = json.loads(request.body)
         author_id = req_.get("id")
         if author_id is not None:
@@ -77,8 +76,7 @@ class FollowList(ShopListMixin, LoginRequiredMixin, ListView):
         return JsonResponse({"success": False}, status=400)
 
     def delete(self, request, author_id):
-        """Обрабатывает POST-запрос от JS при нажатии на кнопку \
-            "Отписаться"."""
+        """Обрабатывает POST-запрос от JS при нажатии на кнопку "Отписаться"."""
         author = get_object_or_404(Follow, user=request.user, author=author_id)
         author.delete()
         return JsonResponse({"success": True})
@@ -132,8 +130,7 @@ class ShopListView(ShopListMixin, ListView):
         return queryset
 
     def post(self, request):
-        """Обрабатывает POST-запрос от JS. Добавляет рецепт в список \
-            покупок."""
+        """Обрабатывает POST-запрос от JS. Добавляет рецепт в список покупок."""
         req_ = json.loads(request.body)
         shoplist = ShopList(request)
         recipe_id = req_.get("id")
