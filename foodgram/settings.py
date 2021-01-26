@@ -22,7 +22,7 @@ SECRET_KEY = "28^l2!fa5oau*+lz))a$%6oo^^f6w3yw+wi6v4a7z0bwk&*@kh"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "[::1]"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "[::1]", "food-gram.cf"]
 
 
 # Application definition
