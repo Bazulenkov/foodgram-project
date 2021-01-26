@@ -1,7 +1,7 @@
 from django.conf import settings
 
 
-class ShopList(object):
+class ShopList:
     """Список рецептов(покупок)."""
 
     def __init__(self, request) -> None:

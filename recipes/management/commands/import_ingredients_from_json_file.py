@@ -13,8 +13,8 @@ class Command(BaseCommand):
         with open(filename) as data_file:
             data = json.loads(data_file.read())
             for data_object in data:
-                title = data_object.get("title", None)
-                dimension = data_object.get("dimension", None)
+                title = data_object.get("title")
+                dimension = data_object.get("dimension")
 
                 try:
                     ingredient, created = Ingredient.objects.get_or_create(

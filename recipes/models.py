@@ -1,31 +1,25 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.template.defaultfilters import slugify as django_slugify
 from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
+
+from .utils import slugify
 
 User = get_user_model()
-
-
-def slugify(s):
-    """
-    Overriding django slugify that allows to use russian words as well.
-    """
-    alphabet = {'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 
-            'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'j', 'к': 'k', 
-            'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 
-            'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 
-            'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ы': 'i', 'э': 'e', 'ю': 'yu',
-            'я': 'ya'}
-
-    return django_slugify("".join(alphabet.get(w, w) for w in s.lower()))
 
 
 class Ingredient(models.Model):
     """Модель ингредиента"""
 
-    title = models.CharField(max_length=50)
-    dimension = models.CharField(max_length=10)
+    title = models.CharField(
+        verbose_name="Название ингредиента", max_length=50
+    )
+    dimension = models.CharField(
+        verbose_name="Единица измерения", max_length=10
+    )
+
+    class Meta:
+        verbose_name = "Ингредиент"
+        verbose_name_plural = "Ингредиенты"
 
 
 class Tag(models.Model):
@@ -64,7 +58,8 @@ class Recipe(models.Model):
     slug = models.SlugField(unique=True)
 
     class Meta:
-
+        verbose_name = "Рецепт"
+        verbose_name_plural = "Рецепты"
         ordering = ["-pub_date"]
 
     def __str__(self):
@@ -75,15 +70,17 @@ class Recipe(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
-
+            slug = slugify(self.title)
+            while Recipe.objects.filter(slug=slug).exists():
+                slug += "1"
+            self.slug = slug
         super().save(*args, **kwargs)
 
 
 class RecipeIngredient(models.Model):
     """
     Модель, связывающая рецепт и ингредиент,
-     в этой таблице будет хранится кол-во ингредиента в рецепте.
+    в этой таблице будет хранится кол-во ингредиента в рецепте.
     """
 
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
@@ -92,10 +89,17 @@ class RecipeIngredient(models.Model):
 
     class Meta:
         # в одном рецепте не может один ингредиент встречаться несколько раз
-        unique_together = ["recipe", "ingredient"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["recipe", "ingredient"],
+                name="unique_recipe_ingredient",
+            )
+        ]
 
     def __str__(self):
-        return f"{self.ingredient.title} - {self.amount} ({self.ingredient.dimension})"
+        name = f"{self.ingredient.title} - {self.amount} \
+            ({self.ingredient.dimension})"
+        return name
 
 
 class Follow(models.Model):

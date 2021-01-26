@@ -5,26 +5,16 @@ from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
-from shoplist.shoplist import ShopList
-
 from .forms import RecipeForm
+from .mixins import ShopListMixin
 from .models import Favorite, Follow, Recipe, RecipeIngredient, Tag, User
-
-
-class ShopListMixin:
-    """Добавляет в context shoplist"""
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        shoplist = ShopList(self.request)
-        context["shoplist"] = shoplist.shoplist
-        return context
 
 
 class RecipeListView(ShopListMixin, ListView):
@@ -75,15 +65,13 @@ class FollowList(ShopListMixin, LoginRequiredMixin, ListView):
     def post(self, request):
         """ Обрабатывает POST-запрос от JS при нажатии на кнопку "Подписаться" """
         req_ = json.loads(request.body)
-        author_id = req_.get("id", None)
+        author_id = req_.get("id")
         if author_id is not None:
             author = get_object_or_404(User, id=author_id)
             obj, created = Follow.objects.get_or_create(
                 user=request.user, author=author
             )
-            if created:
-                return JsonResponse({"success": True})
-            return JsonResponse({"success": False})
+            return JsonResponse({"success": created})
         return JsonResponse({"success": False}, status=400)
 
     def delete(self, request, author_id):
@@ -110,16 +98,13 @@ class Favorites(LoginRequiredMixin, RecipeListView):
     def post(self, request):
         """ Обрабатывает POST-запрос от JS при нажатии на "звездочку" """
         req_ = json.loads(request.body)
-        recipe_id = req_.get("id", None)
+        recipe_id = req_.get("id")
         if recipe_id is not None:
             recipe = get_object_or_404(Recipe, id=recipe_id)
             obj, created = Favorite.objects.get_or_create(
                 user=request.user, recipe=recipe
             )
-
-            if created:
-                return JsonResponse({"success": True})
-            return JsonResponse({"success": False})
+            return JsonResponse({"success": created})
         return JsonResponse({"success": False}, status=400)
 
     def delete(self, request, recipe_id):
@@ -147,7 +132,7 @@ class ShopListView(ShopListMixin, ListView):
         """ Обрабатывает POST-запрос от JS. Добавляет рецепт в список покупок """
         req_ = json.loads(request.body)
         shoplist = ShopList(request)
-        recipe_id = req_.get("id", None)
+        recipe_id = req_.get("id")
         if recipe_id is not None:
             shoplist.add(int(recipe_id))
             return JsonResponse({"success": True})
@@ -232,17 +217,7 @@ class RecipeDelete(ShopListMixin, DeleteView):
     def post(self, request, *args: str, **kwargs):
         shoplist = ShopList(request)
         recipe = get_object_or_404(Recipe, slug=kwargs["slug"])
-        recipe_id : int = recipe.id
+        recipe_id: int = recipe.id
         if recipe_id in shoplist.shoplist:
             shoplist.remove(recipe_id)
         return super().post(request, *args, **kwargs)
-
-
-def page_not_found(request, exception):
-    # Переменная exception содержит отладочную информацию,
-    # выводить её в шаблон пользователской страницы 404 мы не станем
-    return render(request, "misc/404.html", {"path": request.path}, status=404)
-
-
-def server_error(request):
-    return render(request, "misc/500.html", status=500)

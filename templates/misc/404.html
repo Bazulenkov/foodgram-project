@@ -1,7 +1,15 @@
-{% extends "customPage_base.html" %}
+{% extends "base.html" %}
 {% block title %}Ошибка 404{% endblock %}
 {% block content %}
-
-<p class="custom-text-block">Страница <code>{{ path }}</code> не найдена.</p>
-
+{% include "header.html" %}
+<main class="main container">
+    <div class="custom-center-block">
+        <p class="custom-text-block">Страница <code>{{ path }}</code> не найдена.</p>
+        <div class="custom-button-block">
+            <a href="{% url 'index' %}">
+                <button class="button button_style_blue">Перейти на главную</button>
+            </a>
+        </div>
+    </div>
+</main>
 {% endblock %}
