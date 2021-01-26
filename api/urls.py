@@ -7,5 +7,5 @@ router = DefaultRouter()
 router.register("ingredients", views.IngredientList, basename="ingredients")
 
 urlpatterns = [
-    path("", include(router.urls)),
+    path("v1/", include(router.urls)),
 ]

@@ -8,7 +8,7 @@ urlpatterns = [
     path("auth/", include("users.urls")),
     path("auth/", include("django.contrib.auth.urls")),
     path("admin/", admin.site.urls),
-    path("api/v1/", include("api.urls")),
+    path("api/", include("api.urls")),
     path("", include("recipes.urls")),
 ]
 
@@ -18,9 +18,9 @@ handler500 = "recipes.views.server_error"  # noqa
 
 # for django-debug-toolbar
 if settings.DEBUG:
-    import debug_toolbar
+    # import debug_toolbar
 
-    urlpatterns += (path("__debug__/", include(debug_toolbar.urls)),)
+    # urlpatterns += (path("__debug__/", include(debug_toolbar.urls)),)
 
     # for debug media
     urlpatterns += static(
