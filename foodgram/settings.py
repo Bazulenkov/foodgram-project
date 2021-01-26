@@ -1,6 +1,4 @@
-"""
-Django settings for foodgram project.
-"""
+"""Django settings for foodgram project."""
 
 import os
 from pathlib import Path

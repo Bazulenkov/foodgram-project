@@ -27,7 +27,9 @@ urlpatterns = [
         views.RecipeDelete.as_view(),
         name="recipe_delete",
     ),
-    path("recipe/<slug:slug>/", views.RecipeView.as_view(), name="recipe_view"),
+    path(
+        "recipe/<slug:slug>/", views.RecipeView.as_view(), name="recipe_view"
+    ),
     path("favorites/", views.Favorites.as_view(), name="favorites"),
     path(
         "favorites/<int:recipe_id>/",

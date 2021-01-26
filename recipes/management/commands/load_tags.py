@@ -1,6 +1,4 @@
-"""
-Import TAGS to Datababse
-"""
+"""Import TAGS to Datababse."""
 from django.core.management.base import BaseCommand
 
 from recipes.models import Tag
@@ -37,5 +35,5 @@ class Command(BaseCommand):
                 print(msg)
 
     def handle(self, *args, **options):
-        """Call the function to import data"""
+        """Call the function to import data."""
         self.import_tags()

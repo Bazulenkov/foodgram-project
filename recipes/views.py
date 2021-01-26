@@ -19,7 +19,7 @@ from .shoplist import ShopList
 
 
 class RecipeListView(ShopListMixin, ListView):
-    """Выводит список всех рецептов на главную страницу"""
+    """Выводит список всех рецептов на главную страницу."""
 
     template_name = "index.html"
     model = Recipe
@@ -43,7 +43,7 @@ class RecipeListView(ShopListMixin, ListView):
 
 
 class AuthorListView(RecipeListView):
-    """Выводит список всех рецептов одного автора"""
+    """Выводит список всех рецептов одного автора."""
 
     def get_queryset(self):
         self.author = get_object_or_404(
@@ -64,7 +64,8 @@ class FollowList(ShopListMixin, LoginRequiredMixin, ListView):
         return queryset
 
     def post(self, request):
-        """ Обрабатывает POST-запрос от JS при нажатии на кнопку "Подписаться" """
+        """Обрабатывает POST-запрос от JS при нажатии на кнопку \
+            "Подписаться"."""
         req_ = json.loads(request.body)
         author_id = req_.get("id")
         if author_id is not None:
@@ -76,7 +77,8 @@ class FollowList(ShopListMixin, LoginRequiredMixin, ListView):
         return JsonResponse({"success": False}, status=400)
 
     def delete(self, request, author_id):
-        """ Обрабатывает POST-запрос от JS при нажатии на кнопку "Отписаться" """
+        """Обрабатывает POST-запрос от JS при нажатии на кнопку \
+            "Отписаться"."""
         author = get_object_or_404(Follow, user=request.user, author=author_id)
         author.delete()
         return JsonResponse({"success": True})
@@ -97,7 +99,7 @@ class Favorites(LoginRequiredMixin, RecipeListView):
         return context
 
     def post(self, request):
-        """ Обрабатывает POST-запрос от JS при нажатии на "звездочку" """
+        """Обрабатывает POST-запрос от JS при нажатии на "звездочку"."""
         req_ = json.loads(request.body)
         recipe_id = req_.get("id")
         if recipe_id is not None:
@@ -109,7 +111,7 @@ class Favorites(LoginRequiredMixin, RecipeListView):
         return JsonResponse({"success": False}, status=400)
 
     def delete(self, request, recipe_id):
-        """ Обрабатывает POST-запрос от JS при отжатии "звездочки" """
+        """Обрабатывает POST-запрос от JS при отжатии "звездочки"."""
         recipe = get_object_or_404(
             Favorite, user=request.user, recipe=recipe_id
         )
@@ -130,7 +132,8 @@ class ShopListView(ShopListMixin, ListView):
         return queryset
 
     def post(self, request):
-        """ Обрабатывает POST-запрос от JS. Добавляет рецепт в список покупок """
+        """Обрабатывает POST-запрос от JS. Добавляет рецепт в список \
+            покупок."""
         req_ = json.loads(request.body)
         shoplist = ShopList(request)
         recipe_id = req_.get("id")
@@ -140,14 +143,14 @@ class ShopListView(ShopListMixin, ListView):
         return JsonResponse({"success": False}, status=400)
 
     def delete(self, request, recipe_id):
-        """ Обрабатывает POST-запрос от JS. Удаляет рецепт из спика покупок """
+        """Обрабатывает POST-запрос от JS. Удаляет рецепт из спика покупок."""
         shoplist = ShopList(request)
         shoplist.remove(int(recipe_id))
         return JsonResponse({"success": True})
 
 
 def order_pdf(request):
-    """ Формирует pdf-файл со списком ингредиентов для покупки """
+    """Формирует pdf-файл со списком ингредиентов для покупки."""
     shoplist = ShopList(request)
     recipe_list = Recipe.objects.filter(id__in=shoplist.shoplist)
     ingredient_list = (

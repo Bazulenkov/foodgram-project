@@ -8,7 +8,7 @@ User = get_user_model()
 
 
 class Ingredient(models.Model):
-    """Модель ингредиента"""
+    """Модель ингредиента."""
 
     title = models.CharField(
         verbose_name="Название ингредиента", max_length=50
@@ -23,7 +23,7 @@ class Ingredient(models.Model):
 
 
 class Tag(models.Model):
-    """Модель тэга"""
+    """Модель тэга."""
 
     title = models.CharField(max_length=8)
     slug = models.SlugField(unique=True, max_length=50, blank=True, null=True)
@@ -34,7 +34,7 @@ class Tag(models.Model):
 
 
 class Recipe(models.Model):
-    """Модель рецепта"""
+    """Модель рецепта."""
 
     author = models.ForeignKey(
         User,
@@ -79,8 +79,9 @@ class Recipe(models.Model):
 
 class RecipeIngredient(models.Model):
     """
-    Модель, связывающая рецепт и ингредиент,
-    в этой таблице будет хранится кол-во ингредиента в рецепте.
+    Модель, связывающая рецепт и ингредиент.
+
+    В этой таблице будет хранится кол-во ингредиента в рецепте.
     """
 
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
@@ -103,7 +104,7 @@ class RecipeIngredient(models.Model):
 
 
 class Follow(models.Model):
-    """Модель подписки на авторов"""
+    """Модель подписки на авторов."""
 
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="follower"
@@ -120,7 +121,7 @@ class Follow(models.Model):
 
 
 class Favorite(models.Model):
-    """Модель избранных рецептов"""
+    """Модель избранных рецептов."""
 
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="favorites"

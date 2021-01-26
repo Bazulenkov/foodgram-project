@@ -5,8 +5,10 @@ from .models import Ingredient, Recipe, RecipeIngredient, Tag
 
 class RecipeForm(forms.ModelForm):
     """
-    Форма модели Recipe, добавляем через нее новый рецепт и редактируем
-    имеющющийся рецепт
+    Форма модели Recipe.
+
+    Добавляем через нее новый рецепт и редактируем
+    имеющющийся рецепт.
     """
 
     tags = forms.ModelMultipleChoiceField(
@@ -62,7 +64,7 @@ class RecipeForm(forms.ModelForm):
         return recipe_obj
 
     def get_ingredients(self, query_data):
-        """Возвращает список с названием ингредиентов"""
+        """Возвращает список с названием ингредиентов."""
         ingredients = [
             query_data[key]
             for key in query_data.keys()
@@ -71,7 +73,7 @@ class RecipeForm(forms.ModelForm):
         return ingredients
 
     def get_amount(self, q_dict):
-        """Возвращает словарь ингредиент:количество"""
+        """Возвращает словарь ингредиент:количество."""
         result = {}
         for key in q_dict.keys():
             if key.startswith("nameIngredient"):
