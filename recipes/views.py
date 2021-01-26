@@ -15,6 +15,7 @@ from django.views.generic.list import ListView
 from .forms import RecipeForm
 from .mixins import ShopListMixin
 from .models import Favorite, Follow, Recipe, RecipeIngredient, Tag, User
+from .shoplist import ShopList
 
 
 class RecipeListView(ShopListMixin, ListView):
@@ -168,9 +169,9 @@ def order_pdf(request):
     )
     weasyprint.HTML(string=html).write_pdf(
         response,
-        stylesheets=[
-            weasyprint.CSS(str(settings.STATIC_ROOT) + "/shoppinglist_pdf.css")
-        ],
+        # stylesheets=[
+        #     weasyprint.CSS(str(settings.STATIC_ROOT) + "/shoppinglist_pdf.css")
+        # ],
     )
     return response
 

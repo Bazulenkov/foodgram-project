@@ -11,11 +11,11 @@
 </head>
 <body class="body">
     {% block content %}
-        {% include "header.html" with index=True %}
+        {% include "includes/header.html" with index=True %}
 
                 <!-- Содержимое страницы -->
     {% endblock content %}
-    {% include "footer.html" %}
+    {% include "includes/footer.html" %}
 
     <script src="{% static 'js/config/config.js' %}"></script>
     <script src="{% static 'js/api/Api.js' %}"></script>
