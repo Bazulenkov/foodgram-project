@@ -169,9 +169,9 @@ def order_pdf(request):
     )
     weasyprint.HTML(string=html).write_pdf(
         response,
-        # stylesheets=[
-        #     weasyprint.CSS(str(settings.STATIC_ROOT) + "/shoppinglist_pdf.css")
-        # ],
+        stylesheets=[
+            weasyprint.CSS(str(settings.STATIC_ROOT) + "/shoppinglist_pdf.css")
+        ],
     )
     return response
 
