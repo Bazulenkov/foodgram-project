@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
-DEBUG = bool(int(os.environ.get("DEBUG")))
+DEBUG = bool(int(os.environ.get("DEBUG") if os.environ.get("DEBUG") else "0"))
 
 ALLOWED_HOSTS = [
     "localhost",
