@@ -1,4 +1,5 @@
 """foodgram URL Configuration."""
+import debug_toolbar
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -17,11 +18,9 @@ handler404 = "foodgram.views.page_not_found"  # noqa
 handler500 = "foodgram.views.server_error"  # noqa
 
 
-# for django-debug-toolbar
 if settings.DEBUG:
-    # import debug_toolbar
-
-    # urlpatterns += (path("__debug__/", include(debug_toolbar.urls)),)
+    # for django-debug-toolbar
+    urlpatterns += (path("__debug__/", include(debug_toolbar.urls)),)
 
     # for debug media
     urlpatterns += static(

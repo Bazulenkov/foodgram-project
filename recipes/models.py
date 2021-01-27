@@ -71,8 +71,11 @@ class Recipe(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             slug = slugify(self.title)
-            while Recipe.objects.filter(slug=slug).exists():
-                slug += "1"
+            same_slug_last = Recipe.objects.filter(
+                slug__startswith=slug
+            ).aggregate(models.Max("slug"))
+            if same_slug_last["slug__max"]:
+                slug = same_slug_last["slug__max"] + "1"
             self.slug = slug
         super().save(*args, **kwargs)
 
@@ -98,8 +101,10 @@ class RecipeIngredient(models.Model):
         ]
 
     def __str__(self):
-        name = f"{self.ingredient.title} - {self.amount} \
-            ({self.ingredient.dimension})"
+        name = (
+            f"{self.ingredient.title} - {self.amount} "
+            f"{self.ingredient.dimension}"
+        )
         return name
 
 

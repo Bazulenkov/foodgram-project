@@ -27,5 +27,8 @@ weasyprint==52.2
     # via -r requirements.in
 python-dotenv==0.15.0
      # via -r requirements.in
+django-debug-toolbar
+     # via -r requirements.in
+
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
