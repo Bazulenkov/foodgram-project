@@ -10,9 +10,9 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = "28^l2!fa5oau*+lz))a$%6oo^^f6w3yw+wi6v4a7z0bwk&*@kh"
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
-DEBUG = False
+DEBUG = bool(int(os.environ.get("DEBUG")))
 
 ALLOWED_HOSTS = [
     "localhost",
