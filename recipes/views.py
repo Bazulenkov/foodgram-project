@@ -160,7 +160,7 @@ def order_pdf(request):
         "shoppinglist_pdf.html",
         {"recipe_list": recipe_list, "ingredients": ingredient_list},
     )
-    response = HttpResponse(content_type="application/pdf")
+    response = HttpResponse(content_type="application/pdf; charset=utf-8")
     response[
         "Content-Disposition"
     ] = 'filename=\
