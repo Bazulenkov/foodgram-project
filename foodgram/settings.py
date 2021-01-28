@@ -3,6 +3,7 @@
 import os
 from pathlib import Path
 
+from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,7 +11,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY", default=get_random_secret_key())
 
 DEBUG = bool(int(os.environ.get("DEBUG") if os.environ.get("DEBUG") else "0"))
 
@@ -20,7 +21,6 @@ ALLOWED_HOSTS = [
     "[::1]",
     "food-gram.cf",
 ]
-
 
 
 INSTALLED_APPS = [
@@ -50,7 +50,9 @@ MIDDLEWARE = [
 ]
 
 # for django-debug-toolbar
-INTERNAL_IPS = ["127.0.0.1",]
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 
 ROOT_URLCONF = "foodgram.urls"
 
@@ -75,7 +77,6 @@ TEMPLATES = [
 WSGI_APPLICATION = "foodgram.wsgi.application"
 
 
-
 DATABASES = {
     "default": {
         "ENGINE": os.environ.get("DB_ENGINE"),
@@ -95,7 +96,6 @@ DATABASES = {
 # }
 
 
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -112,7 +112,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-
 LANGUAGE_CODE = "ru"
 
 TIME_ZONE = "Europe/Moscow"
@@ -122,7 +121,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 
 STATIC_URL = "static/"
