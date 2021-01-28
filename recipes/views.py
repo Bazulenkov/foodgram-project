@@ -190,15 +190,36 @@ def test_pdf(request):
     </html>
     """
 
-    response = HttpResponse(content_type="application/pdf")
+    response = HttpResponse(content_type="application/pdf charset=utf-8")
     response[
         "Content-Disposition"
-    ] = 'filename="list_1.pdf"'
+    ] = 'attachment; filename="list_1.pdf"'
     weasyprint.HTML(string=html).write_pdf(
         response,
         stylesheets=[]
     )
 
+    return response
+
+def test_txt(request):
+    shoplist = ShopList(request)
+    recipe_list = Recipe.objects.filter(id__in=shoplist.shoplist)
+    # ingredient_list = (
+    #     RecipeIngredient.objects.filter(recipe__id__in=shoplist.shoplist)
+    #     .values("ingredient__title", "ingredient__dimension")
+    #     .annotate(amountsum=Sum("amount"))
+    # )
+
+    ingredient_list = RecipeIngredient.objects.filter(recipe__in=shoplist.shoplist)
+
+    ing_list = map(str, ingredient_list)
+    file_data = '\n'.join(ing_list)
+    # file_data = '\n'.join(f'{k} - {v}' for k, v in ingredients.items())
+    # for ingredient in ingredient_list:
+        # <QuerySet [{'ingredient__title': 'чай дарджилинг', 'ingredient__dimension': 'пакетик', 'amountsum': 2}]>
+    response = HttpResponse(file_data,
+                            content_type='application/text charset=utf-8')
+    response['Content-Disposition'] = 'attachment; filename="shopping_list.txt"'
     return response
 
 
