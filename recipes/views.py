@@ -182,10 +182,10 @@ def test_pdf(request):
     <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Мой заголовок</title>
+        <title>My Title</title>
     </head>
     <body>
-        Привет. Hello!
+        Hello!
     </body>
     </html>
     """
