@@ -176,6 +176,32 @@ def order_pdf(request):
     return response
 
 
+def test_pdf(request):
+    html = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Мой заголовок</title>
+    </head>
+    <body>
+        Привет.
+    </body>
+    </html>
+    """
+
+    response = HttpResponse(content_type="application/pdf")
+    response[
+        "Content-Disposition"
+    ] = 'filename="list_1.pdf"'
+    weasyprint.HTML(string=html).write_pdf(
+        response,
+        stylesheets=[]
+    )
+
+    return response
+
+
 class RecipeCreate(ShopListMixin, LoginRequiredMixin, CreateView):
     """Создание рецепта."""
 
