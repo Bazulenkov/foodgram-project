@@ -6,8 +6,8 @@ WORKDIR /code
 
 COPY . .
 
-RUN apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev
-&& apk --update --upgrade add gcc musl-dev jpeg-dev zlib-dev libffi-dev \
+RUN apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev \
+&& apk --update --upgrade add jpeg-dev zlib-dev libffi-dev \
 cairo-dev pango-dev gdk-pixbuf-dev \
 && pip install --upgrade pip && pip install -r requirements.txt
 
