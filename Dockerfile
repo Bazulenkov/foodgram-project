@@ -10,7 +10,7 @@ COPY . .
 
 RUN set -ex
 RUN apk add --no-cache --virtual .build-deps \ 
-musl-dev gcc jpeg-dev zlib-dev libffi-dev \ 
+musl-dev gcc jpeg-dev zlib-dev libffi-dev
 RUN pip install --no-cache-dir -r /code/requirements.txt \ 
 && apk del .build-deps
 CMD gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000

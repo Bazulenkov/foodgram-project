@@ -19,7 +19,7 @@ jobs:
           pip install flake8
           pip install -r requirements.txt
       - name: Lint with flake8
-        run: flake8 --select E123 .
+        run: flake8 --ignore=D100,D101,D102,D103,D104,D105,D106,D107 .
 
   build_and_push_to_docker_hub:
     name: Push Docker image to Docker Hub
