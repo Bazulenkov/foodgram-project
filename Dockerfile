@@ -28,10 +28,10 @@ cairo-dev pango-dev gdk-pixbuf
 WORKDIR /code
 COPY . .
 
-RUN set -ex
-RUN apk add --no-cache --virtual .build-deps \ 
-musl-dev gcc postgresql-dev jpeg-dev zlib-dev libffi-dev
-RUN pip install -r requirements.txt
-RUN apk del .build-deps
+RUN set -ex \
+&& apk add --no-cache --virtual .build-deps \ 
+musl-dev gcc postgresql-dev jpeg-dev zlib-dev libffi-dev \
+&& pip install -r requirements.txt \
+&& apk del .build-deps \
+&& python3 manage.py collectstatic --noinput
 CMD gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000
-
