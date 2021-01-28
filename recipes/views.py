@@ -185,7 +185,7 @@ def test_pdf(request):
         <title>Мой заголовок</title>
     </head>
     <body>
-        Привет.
+        Привет. Hello!
     </body>
     </html>
     """
