@@ -37,7 +37,7 @@ ENV MUSL_LOCPATH /usr/share/i18n/locales/musl
 WORKDIR /code
 COPY . .
 
-RUN apk add --no-cache $MUSL_LOCALE_DEPS
+RUN apk add --no-cache $MUSL_LOCALE_DEPS \
 && wget https://gitlab.com/rilian-la-te/musl-locales/-/archive/master/musl-locales-master.zip \
 && unzip musl-locales-master.zip \
 && cd musl-locales-master \
