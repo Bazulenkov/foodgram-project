@@ -1,6 +1,7 @@
 name: foodgram CI/CD
 
-on: [push]
+on: 
+  push:
     branches: [master]
 
 jobs:
