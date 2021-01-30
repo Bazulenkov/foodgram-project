@@ -65,7 +65,7 @@ COPY . .
 
 RUN set -ex \
 && apk add --update --upgrade --no-cache --virtual .build-deps \ 
-&& cairo-dev pango-dev gdk-pixbuf cairo ttf-freefont ttf-font-awesome
+cairo-dev pango-dev gdk-pixbuf cairo ttf-freefont ttf-font-awesome \
 musl-dev gcc postgresql-dev jpeg-dev zlib-dev libffi-dev \
 && pip install -r requirements.txt \
 # && pip3 install cffi cssselect2 cairosvg cairocffi WeasyPrint gunicorn dumb-init \
