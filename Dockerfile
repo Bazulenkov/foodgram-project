@@ -44,10 +44,10 @@ RUN apk add --no-cache $MUSL_LOCALE_DEPS \
 && cmake -DLOCALE_PROFILE=OFF -D CMAKE_INSTALL_PREFIX:PATH=/usr . && make && make install \
 && cd .. && rm -r musl-locales-master
 
-ENV LANG=en_US.UTF-8 \
-LC_CTYPE=ru_RU.UTF-8 \
-LC_COLLATE=ru_RU.UTF-8 \
-LANGUAGE=en_US.UTF-8 \
+ENV LANG=en_US.UTF-8
+ENV LC_CTYPE=ru_RU.UTF-8
+ENV LC_COLLATE=ru_RU.UTF-8
+ENV LANGUAGE=en_US.UTF-8
 
 RUN apk --update --upgrade --no-cache add \ 
 cairo-dev pango-dev gdk-pixbuf
