@@ -63,13 +63,11 @@ COPY . .
 # ENV LC_IDENTIFICATION ru_RU.UTF-8
 # ENV LC_ALL ru_RU.UTF-8
 
-RUN apk --update --upgrade --no-cache add \ 
-cairo-dev pango-dev gdk-pixbuf cairo ttf-freefont ttf-font-awesome
-
 RUN set -ex \
-&& apk add --no-cache --virtual .build-deps \ 
+&& apk add --update --upgrade --no-cache --virtual .build-deps \ 
+&& cairo-dev pango-dev gdk-pixbuf cairo ttf-freefont ttf-font-awesome
 musl-dev gcc postgresql-dev jpeg-dev zlib-dev libffi-dev \
 && pip install -r requirements.txt \
-&& pip3 install cffi cssselect2 cairosvg cairocffi WeasyPrint gunicorn dumb-init \
+# && pip3 install cffi cssselect2 cairosvg cairocffi WeasyPrint gunicorn dumb-init \
 && python3 manage.py collectstatic --noinput
 CMD gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000
