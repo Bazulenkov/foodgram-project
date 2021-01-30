@@ -45,9 +45,19 @@ RUN apk add --no-cache $MUSL_LOCALE_DEPS \
 && cd .. && rm -r musl-locales-master
 
 ENV LANG=en_US.UTF-8
-ENV LC_CTYPE=ru_RU.UTF-8
-ENV LC_COLLATE=ru_RU.UTF-8
-ENV LANGUAGE=en_US.UTF-8
+ENV LANGUAGE=en_US:
+ENV LC_CTYPE="en_US.UTF-8"
+ENV LC_NUMERIC=ru_RU.UTF-8
+ENV LC_TIME=ru_RU.UTF-8
+ENV LC_COLLATE="en_US.UTF-8"
+ENV LC_MONETARY=ru_RU.UTF-8
+ENV LC_MESSAGES="en_US.UTF-8"
+ENV LC_PAPER=ru_RU.UTF-8
+ENV LC_NAME=ru_RU.UTF-8
+ENV LC_ADDRESS=ru_RU.UTF-8
+ENV LC_TELEPHONE=ru_RU.UTF-8
+ENV LC_MEASUREMENT=ru_RU.UTF-8
+ENV LC_IDENTIFICATION=ru_RU.UTF-8
 
 RUN apk --update --upgrade --no-cache add \ 
 cairo-dev pango-dev gdk-pixbuf
